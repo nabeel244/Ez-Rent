@@ -11,17 +11,26 @@ const User = sequelize.define('user', {
     allowNull: false,
     unique: true
   },
+  password: {
+    type: DataTypes.STRING,
+    // allowNull: false,
+},
   phone: {
     type: DataTypes.STRING
   },
   status: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
+  },
+  role: {
+    type: DataTypes.ENUM,
+    values: ['lessee', 'lessor']   //lessee mean user, and lessor mean vendor
+    
   }
 }, {
   timestamps: true,
   createdAt: 'created_at',
-  updatedAt: false
+  updatedAt: 'updated_at'
 });
 
 module.exports = User;
