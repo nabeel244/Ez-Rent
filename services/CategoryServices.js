@@ -1,5 +1,5 @@
 // services/CategoryService.js
-const Category = require("../model/Category.js");
+const Category = require("../models/Category");
 
 //Create Category
 const createCategory = async(name, image) => {
