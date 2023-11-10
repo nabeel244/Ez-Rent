@@ -23,7 +23,9 @@ const bcrypt = require('bcrypt');
     // Omit the password when returning the user object
     const userForToken = {
       id: newUser.id,
-      email: newUser.email
+      email: newUser.email,
+      role : newUser.role,
+      status : newUser.status
     };
 
     // Generate JWT

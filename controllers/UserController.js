@@ -14,8 +14,8 @@ const getUsers = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const newUser = await userService.createUser(req.body)
-    res.status(HttpStatus.CREATED).json({ message: "User created successfully", user: newUser });
+    // const newUser = await userService.createUser(req.body)
+    // res.status(HttpStatus.CREATED).json({ message: "User created successfully", user: newUser });
   } catch (err) {
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
   }

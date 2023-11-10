@@ -1,10 +1,8 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../database');
 
-class Product extends Model {}
-
-Product.init({
-    productSlug: {
+const Product = sequelize.define('product', {
+    slug: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
@@ -17,11 +15,11 @@ Product.init({
         type: DataTypes.DECIMAL(10, 2), // Assuming price is a decimal
         allowNull: false
     },
-    totalQuantity: {
+    total_quantity: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    remainingQuantity: {
+    remaining_quantity: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
@@ -29,11 +27,11 @@ Product.init({
         type: DataTypes.STRING,
         allowNull: true // Tagline can be optional
     },
-    collectionFee: {
+    collection_fee: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
-    refundableDeposit: {
+    refundable_deposit: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
@@ -41,11 +39,11 @@ Product.init({
         type: DataTypes.TEXT,
         allowNull: false
     },
-    categoryId: {
+    category_id: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    userId: {
+    user_id: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
@@ -53,12 +51,12 @@ Product.init({
         type: DataTypes.ENUM('Active', 'Inactive', 'Deleted'), // Example values
         allowNull: false
     },
-    mainImage: {
+    feature_image: {
         type: DataTypes.STRING,
         allowNull: true,
         defaultValue: null
     },
-    productImages: {
+    images: {
         type: DataTypes.TEXT, // This can be a JSON string or similar to store multiple images
         allowNull: true,
         defaultValue: null
@@ -68,8 +66,9 @@ Product.init({
         allowNull: true
     }
 }, {
-    sequelize,
-    modelName: 'Product'
+    timestamps: true, // if you want to have Sequelize automatically add createdAt and updatedAt
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
 });
 
 module.exports = Product;
