@@ -2,14 +2,15 @@
 const Category = require("../models/Category");
 
 //Create Category
-const createCategory = async(name, image) => {
+const createCategory = async(body) => {
+    const {name, image} =  body
     return await Category.create({ name, image });
 };
 
 
 //Get Category
 const getCategoryById = async(id) => {
-    return await Category.findByPk(id);
+    return await Category.findById(id);
 };
 
 //Update Category

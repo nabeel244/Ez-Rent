@@ -4,7 +4,7 @@ const CategoryService = require("../services/CategoryService");
 //Create Category
 const createCategory = async(req, res) => {
     try {
-        const category = await CategoryService.createCategory(req.body.name, req.body.image);
+        const category = await CategoryService.createCategory(req);
         res.status(201).json(category);
     } catch (error) {
         res.status(400).json({ error: error.message });
