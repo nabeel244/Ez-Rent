@@ -16,6 +16,7 @@ const getCategoryById = async(id) => {
 //Update Category
 const updateCategory = async(id, name, image) => {
     const category = await Category.findByPk(id);
+    
     if (category) {
         category.name = name;
         category.image = image;
