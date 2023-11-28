@@ -8,11 +8,11 @@ const productRoutes = require('./routes/ProductRoutes')
 const errorHandler = require('./middlewares/ErrorHandlerMiddleware')
 const passport = require('./utils/PassportStrategy')
 const session = require('express-session');
-
+const cors = require('cors')
 
 const app = express();
 const sequelize = require('./database');
-
+app.use(cors())
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(

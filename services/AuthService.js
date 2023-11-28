@@ -42,7 +42,7 @@ const login = async (body) => {
     throw new Error('Invalid password');
   }
 
-  const userForToken = {
+  let userForToken = {
     id: user.id,
     email: user.email,
     role: user.role,
@@ -50,7 +50,10 @@ const login = async (body) => {
   };
 
   const token = jwt.sign(userForToken, process.env.SECRETKEY, { expiresIn: process.env.EXPIRETIME });
-  return token;
+  userForToken.token = token;
+
+  // Return the updated userForToken object
+  return userForToken;
 
 }
 
