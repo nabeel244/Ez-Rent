@@ -1,5 +1,6 @@
 // controllers/CategoryController.js
 const CategoryService = require("../services/CategoryService");
+const upload = require("../middlewares/FileHandlingMiddleware");
 
 //Create Category
 const createCategory = async(req, res) => {
