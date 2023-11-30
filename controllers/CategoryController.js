@@ -1,14 +1,14 @@
 // controllers/CategoryController.js
 const CategoryService = require("../services/CategoryService");
-const upload = require("../middlewares/FileHandlingMiddleware");
+const HttpStatus = require('../utils/ResponseStatus')
 
 //Create Category
-const createCategory = async(req, res) => {
+const createCategory = async(req, res, next) => {
     try {
         const category = await CategoryService.createCategory(req);
-        res.status(201).json(category);
+        res.status(HttpStatus.CREATED).json({ message: "Category created successfully", category });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        next(error)
     }
 };
 

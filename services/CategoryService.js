@@ -1,20 +1,28 @@
 // services/CategoryService.js
 const Category = require("../models/Category");
+const upload = require("../middlewares/FileHandlingMiddleware");
+
 
 //Create Category
-const createCategory = async(body) => {
-    const { name, image } = body
-    return await Category.create({ name, image });
+const createCategory = async (req) => {
+    const name = req.body.name;
+    let imagePath = '';
+
+    // Check if file is uploaded
+    if (req.file) {
+        imagePath = req.file.path; // Path where the image is stored
+    }
+    return await Category.create({ name, image: imagePath });
 };
 
 
 //Get Category
-const getCategoryById = async(id) => {
+const getCategoryById = async (id) => {
     return await Category.findById(id);
 };
 
 //Update Category
-const updateCategory = async(id, name, image) => {
+const updateCategory = async (id, name, image) => {
     const category = await Category.findByPk(id);
 
     if (category) {
@@ -29,7 +37,7 @@ const updateCategory = async(id, name, image) => {
 
 
 //Delete Category
-const deleteCategory = async(id) => {
+const deleteCategory = async (id) => {
     const category = await Category.findByPk(id);
     if (category) {
         await category.destroy();
