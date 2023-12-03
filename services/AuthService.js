@@ -29,6 +29,11 @@ const register = async (userData) => {
 
 };
 
+// const verfiyPhone = async (body) => {
+  
+//   const user = await User.findOne({ where: { email: email } });
+// }
+
 const login = async (body) => {
   const { email, password } = body
   const user = await User.findOne({ where: { email: email } });
