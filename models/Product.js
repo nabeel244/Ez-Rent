@@ -51,15 +51,27 @@ const Product = sequelize.define('products', {
         type: DataTypes.ENUM('Active', 'Inactive', 'Deleted'), // Example values
         allowNull: false
     },
-    feature_image: {
+    featuredImagePath: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+    },
+    featuredImageName: {
         type: DataTypes.STRING,
         allowNull: true,
         defaultValue: null
     },
     images: {
-        type: DataTypes.TEXT, // This can be a JSON string or similar to store multiple images
+        type: DataTypes.TEXT, // Store as JSON string
         allowNull: true,
-        defaultValue: null
+        defaultValue: null,
+        get() {
+            const rawValue = this.getDataValue('images');
+            return rawValue ? JSON.parse(rawValue) : [];
+        },
+        set(value) {
+            this.setDataValue('images', JSON.stringify(value));
+        }
     },
     remarks: {
         type: DataTypes.TEXT,

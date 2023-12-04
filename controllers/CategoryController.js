@@ -5,12 +5,14 @@ const upload = require("../middlewares/FileHandlingMiddleware");
 //Create Category
 const createCategory = async(req, res) => {
     try {
-        const category = await CategoryService.createCategory(req);
+        // req.file is where the uploaded file data will be
+        const category = await CategoryService.createCategory(req.body, req.file);
         res.status(201).json(category);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
+
 
 //Get Category
 const getCategory = async(req, res) => {
@@ -28,7 +30,7 @@ const getCategory = async(req, res) => {
 //Update Category
 const updateCategory = async(req, res) => {
     try {
-        const updatedCategory = await CategoryService.updateCategory(req.params.id, req.body.name, req.body.image);
+        const updatedCategory = await CategoryService.updateCategory(req.params.id, req.body, req.file);
         if (!updatedCategory) {
             return res.status(404).json({ message: 'Category not found' });
         }
@@ -37,6 +39,7 @@ const updateCategory = async(req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 //Delete Category
 const deleteCategory = async(req, res) => {
