@@ -3,9 +3,10 @@ const Category = require("../models/Category");
 
 //Create Category
 const createCategory = async(body) => {
-    const { name, image } = body
-    return await Category.create({ name, image });
+    const { name, imagePath, imageName } = body;
+    return await Category.create({ name, imagePath, imageName });
 };
+
 
 
 //Get Category
@@ -14,14 +15,14 @@ const getCategoryById = async(id) => {
 };
 
 //Update Category
-const updateCategory = async(id, name, image) => {
+const updateCategory = async(id, body) => {
+    const { name, imagePath, imageName } = body;
     const category = await Category.findByPk(id);
 
     if (category) {
         category.name = name || category.name;
-        if (image) { // Only update the image if a new one is provided
-            category.image = image;
-        }
+        category.imagePath = imagePath || category.imagePath;
+        category.imageName = imageName || category.imageName;
         await category.save();
     }
     return category;
