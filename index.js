@@ -10,6 +10,7 @@ const passport = require('./utils/PassportStrategy')
 const session = require('express-session');
 const cors = require('cors')
 
+
 const app = express();
 const sequelize = require('./database');
 app.use(cors())
@@ -21,13 +22,13 @@ app.use(
     })
 );
 app.use(session({
-    secret: 'newsercretkey', 
+    secret: 'newsercretkey',
     resave: false,
     saveUninitialized: false
-  }));
+}));
 app.use(passport.initialize());
 app.use(passport.session());
-// sequelize.sync({ alter: true }).then(() => {    // when you update your db , add or update you migration then you uncomment these
+// sequelize.sync({ alter: true }).then(() => { // when you update your db , add or update you migration then you uncomment these
 //     console.log('Database & tables created!');
 // });
 app.use('/api/users', userRoutes);

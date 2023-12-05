@@ -6,6 +6,12 @@ const bcrypt = require('bcrypt');
 const { Error, Op } = require('sequelize');
 const crypto = require('crypto');
 const { forgotPasswordMail } = require('../utils/EmailService')
+const  sendSms  = require('../utils/SmsService')
+
+
+function generateRandomNumber() {
+  return Math.floor(1000 + Math.random() * 9000); // Generates a number between 1000 and 9999
+}
 
 
 const register = async (userData) => {
@@ -18,7 +24,7 @@ const register = async (userData) => {
   if (userData.password != userData.confirm_password) {
     throw new Error('Confirm Password not match')
   }
-  const hashedPassword = await bcrypt.hash(userData.password, 10); // the number 10 is the salt rounds
+  const hashedPassword = await bcrypt.hash(userData.password, 10); 
 
   // Create user record in database
   const newUser = await User.create({
@@ -29,13 +35,25 @@ const register = async (userData) => {
 
 };
 
+const verfiyPhone = async (body) => {
+  const user = await User.findOne({ where: { email: body.email } }); 
+  if (user) {
+    const verificationCode = generateRandomNumber();
+   const text =  `${verificationCode} is your verification code, don't share to others.`
+      await sendSms(body.number, text)
+    return
+  } else {
+    throw new Error('User not found');
+  }
+};
+
 const login = async (body) => {
   const { email, password } = body
   const user = await User.findOne({ where: { email: email } });
   if (!user) {
     throw new Error('User not found');
   }
- 
+
 
   const passwordIsValid = await bcrypt.compare(password, user.password);
   if (!passwordIsValid) {
@@ -96,11 +114,11 @@ const forgotPassword = async (body) => {
 };
 const resetPassword = async (body) => {
   // Find the password reset token record
-  const { token, password,user_id } = body
+  const { token, password, user_id } = body
   const resetTokenRecord = await PasswordResetToken.findOne({
     where: {
       token: token,
-      userId : user_id,
+      userId: user_id,
       expiresAt: {
         [Op.gt]: new Date() // Checks if the token has not expired
       }
@@ -130,5 +148,6 @@ module.exports = {
   register,
   login,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  verfiyPhone
 };

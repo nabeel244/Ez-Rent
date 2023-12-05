@@ -6,13 +6,18 @@ const Category = sequelize.define('categories', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    image: {
+    image_path: {
         type: DataTypes.STRING,
-        allowNull: true, // this allows the field to be null
-        defaultValue: null // sets the default value to null
+        allowNull: true, // Allow null if the image path is not mandatory
+        defaultValue: null
+    },
+    image_name: {
+        type: DataTypes.STRING,
+        allowNull: true, // Allow null if the image name is not mandatory
+        defaultValue: null
     }
 }, {
-    timestamps: true, // if you want to have Sequelize automatically add createdAt and updatedAt
+    timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
 });
