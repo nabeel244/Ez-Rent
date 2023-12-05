@@ -2,10 +2,16 @@
 
 const productService = require('../services/ProductService');
 
+
 const productController = {
     async createProduct(req, res) {
         try {
-            const product = await productService.createProduct(req.body);
+            // Assuming 'featuredImage' and 'images' are the field names for the uploaded files
+            const imageFiles = {
+                featuredImage: req.file, // if there's a single featured image
+                images: req.files.images // if there are multiple images
+            };
+            const product = await productService.createProduct(req.body, imageFiles);
             res.status(201).json(product);
         } catch (error) {
             res.status(400).json({ message: error.message });
@@ -25,7 +31,12 @@ const productController = {
     async updateProduct(req, res) {
         try {
             const productId = req.params.id;
-            const updatedProduct = await productService.updateProduct(productId, req.body);
+            const imageFiles = {
+                featuredImage: req.file,
+                images: req.files.images
+            };
+
+            const updatedProduct = await productService.updateProduct(productId, req.body, imageFiles);
             res.json(updatedProduct);
         } catch (error) {
             res.status(400).json({ message: error.message });

@@ -1,18 +1,34 @@
 // services/CategoryService.js
+
+const cloudinary = require('cloudinary').v2;
 const Category = require("../models/Category");
 const upload = require("../middlewares/FileHandlingMiddleware");
 
 
-//Create Category
-const createCategory = async (req) => {
-    const name = req.body.name;
-    let imagePath = '';
-
-    // Check if file is uploaded
-    if (req.file) {
-        imagePath = req.file.path; // Path where the image is stored
+const uploadImageToCloudinary = async(imagePath) => {
+    try {
+        const result = await cloudinary.uploader.upload(imagePath);
+        return { path: result.url, name: result.original_filename };
+    } catch (error) {
+        console.error('Error uploading to Cloudinary', error);
+        throw error;
     }
-    return await Category.create({ name, image: imagePath });
+};
+
+//Create Category
+
+const createCategory = async(body, imageFile) => {
+    const { name } = body;
+
+    let imagePath, imageName;
+    if (imageFile) {
+        const uploadResult = await uploadImageToCloudinary(imageFile.path);
+        imagePath = uploadResult.path;
+        imageName = uploadResult.name;
+    }
+
+    return await Category.create({ name, imagePath, imageName });
+
 };
 
 
@@ -22,14 +38,21 @@ const getCategoryById = async (id) => {
 };
 
 //Update Category
-const updateCategory = async (id, name, image) => {
+
+const updateCategory = async(id, body, imageFile) => {
+    const { name } = body;
+
     const category = await Category.findByPk(id);
 
     if (category) {
         category.name = name || category.name;
-        if (image) { // Only update the image if a new one is provided
-            category.image = image;
+
+        if (imageFile) {
+            const uploadResult = await uploadImageToCloudinary(imageFile.path);
+            category.imagePath = uploadResult.path;
+            category.imageName = uploadResult.name;
         }
+
         await category.save();
     }
     return category;
