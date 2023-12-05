@@ -12,14 +12,14 @@ const register = async (req, res, next) => {
     next(error)
   }
 };
-// const verfiyPhone = async (req, res, next) => {
-//   try {
-//     await authService.verfiyPhone(req.body)
-//     res.status(HttpStatus.CREATED).json({ message: "Verification code have sent to your number" });
-//   } catch (error) {
-//     next(error)
-//   }
-// };
+const verfiyPhone = async (req, res, next) => {
+  try {
+    await authService.verfiyPhone(req.body)
+    res.status(HttpStatus.CREATED).json({ message: "Verification code have sent to your number" });
+  } catch (error) {
+    next(error)
+  }
+};
 
 const login = async (req, res, next) => {
   try {
@@ -56,6 +56,6 @@ module.exports = {
   login,
   forgotPassword,
   resetPassword,
-  // verfiyPhone
+  verfiyPhone
   
 };

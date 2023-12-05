@@ -1,8 +1,7 @@
 // services/CategoryService.js
 
-const cloudinary = require('cloudinary').v2;
 const Category = require("../models/Category");
-const upload = require("../middlewares/FileHandlingMiddleware");
+const cloudinary = require('../utils/cloudinary')
 
 
 const uploadImageToCloudinary = async(imagePath) => {
@@ -20,14 +19,15 @@ const uploadImageToCloudinary = async(imagePath) => {
 const createCategory = async(body, imageFile) => {
     const { name } = body;
 
-    let imagePath, imageName;
+    let image_path, image_name;
     if (imageFile) {
         const uploadResult = await uploadImageToCloudinary(imageFile.path);
-        imagePath = uploadResult.path;
-        imageName = uploadResult.name;
+        console.log(uploadResult, 'this is the result')
+        image_path = uploadResult.path;
+        image_name = uploadResult.name;
     }
 
-    return await Category.create({ name, imagePath, imageName });
+    return await Category.create({ name, image_path, image_name });
 
 };
 

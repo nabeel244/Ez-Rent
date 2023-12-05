@@ -6,12 +6,12 @@ const Category = sequelize.define('categories', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    imagePath: {
+    image_path: {
         type: DataTypes.STRING,
         allowNull: true, // Allow null if the image path is not mandatory
         defaultValue: null
     },
-    imageName: {
+    image_name: {
         type: DataTypes.STRING,
         allowNull: true, // Allow null if the image name is not mandatory
         defaultValue: null
