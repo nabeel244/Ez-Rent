@@ -6,19 +6,19 @@ const fs = require('fs');
 const uploadDir = 'uploads/';
 
 // Create uploads directory if it doesn't exist
-if (!fs.existsSync(uploadDir)){
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
+// if (!fs.existsSync(uploadDir)){
+//     fs.mkdirSync(uploadDir, { recursive: true });
+// }
+const storage = multer.memoryStorage();
 // Set storage engine
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, uploadDir); // Use the directory
-    },
-    filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
+// const storage = multer.diskStorage({
+//     destination: function(req, file, cb) {
+//         cb(null, uploadDir); // Use the directory
+//     },
+//     filename: function(req, file, cb) {
+//         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+//     }
+// });
 
 // Init upload
 const upload = multer({
@@ -44,5 +44,6 @@ function checkFileType(file, cb) {
         cb('Error: Images Only!');
     }
 }
+
 
 module.exports = upload;
