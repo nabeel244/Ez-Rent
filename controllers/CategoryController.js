@@ -1,15 +1,17 @@
 // controllers/CategoryController.js
 const CategoryService = require("../services/CategoryService");
-const upload = require("../middlewares/FileHandlingMiddleware");
+const HttpStatus = require('../utils/ResponseStatus')
 
 //Create Category
-const createCategory = async(req, res) => {
+const createCategory = async(req, res, next) => {
     try {
+
         // req.file is where the uploaded file data will be
         const category = await CategoryService.createCategory(req.body, req.file);
         res.status(201).json(category);
+
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        next(error)
     }
 };
 

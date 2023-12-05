@@ -2,6 +2,8 @@
 
 const cloudinary = require('cloudinary').v2;
 const Category = require("../models/Category");
+const upload = require("../middlewares/FileHandlingMiddleware");
+
 
 const uploadImageToCloudinary = async(imagePath) => {
     try {
@@ -14,6 +16,7 @@ const uploadImageToCloudinary = async(imagePath) => {
 };
 
 //Create Category
+
 const createCategory = async(body, imageFile) => {
     const { name } = body;
 
@@ -25,17 +28,20 @@ const createCategory = async(body, imageFile) => {
     }
 
     return await Category.create({ name, imagePath, imageName });
+
 };
 
 
 //Get Category
-const getCategoryById = async(id) => {
+const getCategoryById = async (id) => {
     return await Category.findById(id);
 };
 
 //Update Category
+
 const updateCategory = async(id, body, imageFile) => {
     const { name } = body;
+
     const category = await Category.findByPk(id);
 
     if (category) {
@@ -54,7 +60,7 @@ const updateCategory = async(id, body, imageFile) => {
 
 
 //Delete Category
-const deleteCategory = async(id) => {
+const deleteCategory = async (id) => {
     const category = await Category.findByPk(id);
     if (category) {
         await category.destroy();
