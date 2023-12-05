@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const { Error, Op } = require('sequelize');
 const crypto = require('crypto');
 const { forgotPasswordMail } = require('../utils/EmailService')
-const  sendSms  = require('../utils/SmsService')
+const sendSms = require('../utils/SmsService')
 
 
 function generateRandomNumber() {
@@ -24,7 +24,7 @@ const register = async (userData) => {
   if (userData.password != userData.confirm_password) {
     throw new Error('Confirm Password not match')
   }
-  const hashedPassword = await bcrypt.hash(userData.password, 10); 
+  const hashedPassword = await bcrypt.hash(userData.password, 10);
 
   // Create user record in database
   const newUser = await User.create({
@@ -35,13 +35,33 @@ const register = async (userData) => {
 
 };
 
-const verfiyPhone = async (body) => {
-  const user = await User.findOne({ where: { email: body.email } }); 
+const sendVerificationCode = async (body) => {
+
+  const user = await User.findOne({ where: { email: body.email } });
   if (user) {
     const verificationCode = generateRandomNumber();
-   const text =  `${verificationCode} is your verification code, don't share to others.`
-      await sendSms(body.number, text)
-    return
+    const text = `${verificationCode} is your verification code, don't share to others.`
+    await sendSms(body.number, text)
+    await User.update({ verify_code: verificationCode }, { where: { email: body.email } });
+
+  } else {
+    throw new Error('User not found')
+  }
+};
+const verifyCode = async (body) => {
+  const user = await User.findOne({ where: { email: body.email } });
+  if (user) {
+    // Check if the provided code matches the one in the database
+    if (user.verify_code === body.code) {
+      // Codes match, so delete the code from the database
+      await User.update({ verify_code: null }, { where: { email: body.email } });
+
+      // Return a success message or perform other success actions
+      return { message: 'Verification successful' };
+    } else {
+      // Codes do not match, handle accordingly
+      throw new Error('Invalid verification code');
+    }
   } else {
     throw new Error('User not found');
   }
@@ -149,5 +169,6 @@ module.exports = {
   login,
   forgotPassword,
   resetPassword,
-  verfiyPhone
+  sendVerificationCode,
+  verifyCode
 };

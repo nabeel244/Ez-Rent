@@ -12,10 +12,18 @@ const register = async (req, res, next) => {
     next(error)
   }
 };
-const verfiyPhone = async (req, res, next) => {
+const sendVerificationCode = async (req, res, next) => {
   try {
-    await authService.verfiyPhone(req.body)
+    await authService.sendVerificationCode(req.body)
     res.status(HttpStatus.CREATED).json({ message: "Verification code have sent to your number" });
+  } catch (error) {
+    next(error)
+  }
+};
+const verifyCode = async (req, res, next) => {
+  try {
+    await authService.verifyCode(req.body)
+    res.status(HttpStatus.OK).json({ message: "Verfication successfully" });
   } catch (error) {
     next(error)
   }
@@ -56,6 +64,7 @@ module.exports = {
   login,
   forgotPassword,
   resetPassword,
-  verfiyPhone
+  sendVerificationCode,
+  verifyCode
   
 };
