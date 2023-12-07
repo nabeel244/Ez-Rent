@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post('/create', fileHandlingMiddleware, CategoryController.createCategory);
 
-router.get('/:id', authenticateToken, checkRole(['admin']), CategoryController.getCategory);
+router.get('/:id', authenticateToken, checkRole(['lessor']), CategoryController.getCategory);
 router.put('/:id', fileHandlingMiddleware, CategoryController.updateCategory);
 router.delete('/:id', CategoryController.deleteCategory);
 
