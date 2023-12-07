@@ -121,20 +121,24 @@ const forgotPassword = async (body) => {
     await resetTokenRecord.save();
   }
 
-  const resetUrl = `${process.env.APP_URL}&user_id=${user.id}&token=${resetToken}`;
+  const resetUrl = `${process.env.APP_URL}/resetPassword?user_id=${user.id}&token=${resetToken}`;
 
   const mailOptions = {
     from: process.env.TRANSPORTER_USER,
     to: user.email,
     subject: 'Password Reset',
-    text: `Please click on the following link, or paste this into your browser to complete the process: ${resetUrl}`
+    html: `
+    <p>To reset your password, please click the button below:</p>
+    <a href="${resetUrl}" style="background-color: #4CAF50; color: white; padding: 15px 25px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">Reset Password</a>
+    <p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
+  `
   };
 
   await forgotPasswordMail(mailOptions);
 };
 const resetPassword = async (body) => {
   // Find the password reset token record
-  const { token, password, user_id } = body
+  const { token, password, user_id, confirm_password } = body
   const resetTokenRecord = await PasswordResetToken.findOne({
     where: {
       token: token,
@@ -148,7 +152,13 @@ const resetPassword = async (body) => {
   if (!resetTokenRecord) {
     throw new Error('Invalid or expired password reset token');
   }
+  if (!password) {
+    throw new Error('password is required');
 
+  }
+  if (password != confirm_password) {
+    throw new Error('Confirm Password not match')
+  }
   // Hash the new password
   const hashedPassword = await bcrypt.hash(password, 10);
 
