@@ -12,7 +12,7 @@ const checkRole = (roles) => {
         if (req.user && roles.includes(req.user.role)) {
             next(); // User has the required role, proceed to the next middleware
         } else {
-            res.status(403).send('Access Denied: You do not have the correct role'); // User does not have the required role
+            throw new Error('Access Denied: You do not have the correct role');
         }
     }
 };
