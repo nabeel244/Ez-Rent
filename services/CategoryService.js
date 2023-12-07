@@ -4,23 +4,21 @@ const Category = require("../models/Category");
 const cloudinary = require('../utils/cloudinary')
 
 
-const uploadImageToCloudinary = async (file) => {
+const uploadImageToCloudinary = async(file) => {
     try {
-        // Return a promise that resolves when the upload is complete
         return new Promise((resolve, reject) => {
-            // Create an upload stream
             const uploadStream = cloudinary.uploader.upload_stream({
-                resource_type: 'auto'
+                resource_type: 'auto',
+                public_id: file.originalname.split('.')[0] // This sets the public_id to the original filename without extension
             }, (error, result) => {
                 if (error) {
                     reject(error);
                 } else {
-                    console.log(result)
-                    resolve({ path: result.url, name: result.original_filename });
+                    console.log(result);
+                    resolve({ path: result.url, name: file.originalname }); // Use file.originalname to get the original file name
                 }
             });
 
-            // Write file buffer to the stream
             uploadStream.end(file.buffer);
         });
     } catch (error) {
@@ -31,7 +29,7 @@ const uploadImageToCloudinary = async (file) => {
 
 //Create Category
 
-const createCategory = async (body, imageFile) => {
+const createCategory = async(body, imageFile) => {
     const { name } = body;
     console.log(imageFile)
     let image_path, image_name;
@@ -48,13 +46,13 @@ const createCategory = async (body, imageFile) => {
 
 
 //Get Category
-const getCategoryById = async (id) => {
-    return await Category.findById(id);
+const getCategoryById = async(id) => {
+    return await Category.findByPk(id);
 };
 
 //Update Category
 
-const updateCategory = async (id, body, imageFile) => {
+const updateCategory = async(id, body, imageFile) => {
     const { name } = body;
 
     const category = await Category.findByPk(id);
@@ -63,7 +61,7 @@ const updateCategory = async (id, body, imageFile) => {
         category.name = name || category.name;
 
         if (imageFile) {
-            const uploadResult = await uploadImageToCloudinary(imageFile.path);
+            const uploadResult = await uploadImageToCloudinary(imageFile);
             category.imagePath = uploadResult.path;
             category.imageName = uploadResult.name;
         }
@@ -75,7 +73,7 @@ const updateCategory = async (id, body, imageFile) => {
 
 
 //Delete Category
-const deleteCategory = async (id) => {
+const deleteCategory = async(id) => {
     const category = await Category.findByPk(id);
     if (category) {
         await category.destroy();
