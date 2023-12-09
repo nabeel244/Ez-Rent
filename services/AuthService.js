@@ -22,7 +22,7 @@ const register = async (userData) => {
 
   }
   if (userData.password != userData.confirm_password) {
-    throw new Error('Confirm Password not match')
+    throw new Error('incorrect password')
   }
   const hashedPassword = await bcrypt.hash(userData.password, 10);
 
@@ -60,7 +60,7 @@ const verifyCode = async (body) => {
       return { message: 'Verification successful' };
     } else {
       // Codes do not match, handle accordingly
-      throw new Error('Invalid verification code');
+      throw new Error('invalid OTP code');
     }
   } else {
     throw new Error('User not found');
@@ -71,13 +71,13 @@ const login = async (body) => {
   const { email, password } = body
   const user = await User.findOne({ where: { email: email } });
   if (!user) {
-    throw new Error('User not found');
+    throw new Error('invalid email address');
   }
 
 
   const passwordIsValid = await bcrypt.compare(password, user.password);
   if (!passwordIsValid) {
-    throw new Error('Invalid password');
+    throw new Error('incorrect password');
   }
 
   let userForToken = {
@@ -99,7 +99,7 @@ const forgotPassword = async (body) => {
   const { email } = body
   const user = await User.findOne({ where: { email: email } });
   if (!user) {
-    throw new Error('User not found');
+    throw new Error('invalid email address');
   }
 
   const resetToken = crypto.randomBytes(20).toString('hex');
@@ -157,7 +157,7 @@ const resetPassword = async (body) => {
 
   }
   if (password != confirm_password) {
-    throw new Error('Confirm Password not match')
+    throw new Error('password does not match')
   }
   // Hash the new password
   const hashedPassword = await bcrypt.hash(password, 10);
