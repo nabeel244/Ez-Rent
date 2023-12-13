@@ -16,6 +16,10 @@ function generateRandomNumber() {
 
 const register = async (userData) => {
 
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  if (!emailRegex.test(userData.email)) {
+    throw new Error('Invalid email format');
+  }
   // Encrypt user password
   if (!userData.password) {
     throw new Error('password is required');
