@@ -18,7 +18,7 @@ const register = async (userData) => {
 
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   if (!emailRegex.test(userData.email)) {
-    throw new Error('Invalid email format');
+    throw new Error('invalid email format');
   }
   // Encrypt user password
   if (!userData.password) {
@@ -26,7 +26,7 @@ const register = async (userData) => {
 
   }
   if (userData.password != userData.confirm_password) {
-    throw new Error('incorrect password')
+    throw new Error('password does not match')
   }
   const hashedPassword = await bcrypt.hash(userData.password, 10);
 
@@ -49,7 +49,7 @@ const sendVerificationCode = async (body) => {
     await User.update({ verify_code: verificationCode }, { where: { email: body.email } });
 
   } else {
-    throw new Error('User not found')
+    throw new Error('user not found')
   }
 };
 const verifyCode = async (body) => {
@@ -67,15 +67,19 @@ const verifyCode = async (body) => {
       throw new Error('invalid OTP code');
     }
   } else {
-    throw new Error('User not found');
+    throw new Error('user not found');
   }
 };
 
 const login = async (body) => {
   const { email, password } = body
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  if (!emailRegex.test(email)) {
+    throw new Error('invalid email format');
+  }
   const user = await User.findOne({ where: { email: email } });
   if (!user) {
-    throw new Error('invalid email address');
+    throw new Error('user not found');
   }
 
 
@@ -102,8 +106,12 @@ const login = async (body) => {
 const forgotPassword = async (body) => {
   const { email } = body
   const user = await User.findOne({ where: { email: email } });
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  if (!emailRegex.test(email)) {
+    throw new Error('invalid email format');
+  }
   if (!user) {
-    throw new Error('invalid email address');
+    throw new Error('user not found');
   }
 
   const resetToken = crypto.randomBytes(20).toString('hex');
@@ -154,7 +162,7 @@ const resetPassword = async (body) => {
   });
 
   if (!resetTokenRecord) {
-    throw new Error('Invalid or expired password reset token');
+    throw new Error('invalid or expired password reset token');
   }
   if (!password) {
     throw new Error('password is required');
@@ -169,7 +177,7 @@ const resetPassword = async (body) => {
   // Update the user's password
   const user = await User.findOne({ where: { id: resetTokenRecord.userId } });
   if (!user) {
-    throw new Error('User not found');
+    throw new Error('user not found');
   }
 
   user.password = hashedPassword;
