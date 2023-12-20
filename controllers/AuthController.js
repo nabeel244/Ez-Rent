@@ -52,7 +52,7 @@ const forgotPassword = async(req, res, next) => {
 const resetPassword = async(req, res, next) => {
     try {
         await authService.resetPassword(req.body)
-        res.status(HttpStatus.OK).json({ message: "Password changed successfully" });
+        res.status(HttpStatus.OK).json({ message: "Password updated" });
     } catch (error) {
         next(error)
 
