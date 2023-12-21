@@ -81,9 +81,25 @@ const deleteCategory = async(id) => {
     return category;
 };
 
+// Search Category
+const searchCategoriesByName = async(searchTerm) => {
+    if (!searchTerm) {
+        throw new Error('Search term is required');
+    }
+
+    return await Category.findAll({
+        where: {
+            name: {
+                [Op.like]: `%${searchTerm}%` // Use Op.like for partial matching
+            }
+        }
+    });
+};
+
 module.exports = {
     createCategory,
     getCategoryById,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    searchCategoriesByName
 };

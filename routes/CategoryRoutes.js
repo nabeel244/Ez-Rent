@@ -12,5 +12,7 @@ router.post('/create', authenticateToken, checkRole(['admin']), fileHandlingMidd
 router.get('/:id', authenticateToken, checkRole(['admin']), CategoryController.getCategory);
 router.put('/:id', authenticateToken, checkRole(['admin']), fileHandlingMiddleware, CategoryController.updateCategory);
 router.delete('/:id', authenticateToken, checkRole(['admin']), CategoryController.deleteCategory);
+router.get('/search', authenticateToken, checkRole(['admin', 'lessor']), CategoryController.searchCategory); // Adjust roles as necessary
+
 
 module.exports = router;

@@ -16,4 +16,7 @@ router.delete('/products/:id', authenticateToken, checkRole(['lessor']), product
 
 router.get('/products', authenticateToken, checkRole(['lessor', 'admin']), productController.getAllProducts);
 
+router.get('/products/search', authenticateToken, checkRole(['lessor', 'lessee', 'admin']), productController.searchProducts);
+
+
 module.exports = router;

@@ -76,7 +76,28 @@ const productService = {
     async getAllProducts() {
         const products = await Product.findAll();
         return products;
-    }
+    },
+    async searchProducts(searchParams) {
+        let whereConditions = {};
+
+        if (searchParams.categoryId) {
+            whereConditions.categoryId = searchParams.categoryId;
+        }
+
+        if (searchParams.userId) {
+            whereConditions.userId = searchParams.userId;
+        }
+
+        const products = await Product.findAll({
+            where: whereConditions,
+            include: [
+                // Include other models here if necessary, like Category or User
+            ]
+        });
+
+        return products;
+    },
+
 };
 
 module.exports = productService;

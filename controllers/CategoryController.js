@@ -57,9 +57,21 @@ const deleteCategory = async(req, res) => {
     }
 };
 
+// Search Category
+const searchCategory = async(req, res, next) => {
+    try {
+        const searchTerm = req.query.name;
+        const categories = await CategoryService.searchCategoriesByName(searchTerm);
+        res.status(HttpStatus.OK).json(categories);
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     createCategory,
     getCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    searchCategory
 };

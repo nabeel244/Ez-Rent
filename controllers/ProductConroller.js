@@ -1,7 +1,7 @@
 // controllers/productController.js
 
 const productService = require('../services/ProductService');
-
+const HttpStatus = require('../utils/ResponseStatus')
 
 const productController = {
     async createProduct(req, res) {
@@ -61,7 +61,16 @@ const productController = {
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
-    }
+    },
+    async searchProducts(req, res) {
+        try {
+            const { categoryId, userId } = req.query;
+            const products = await productService.searchProducts({ categoryId, userId });
+            res.json(products);
+        } catch (error) {
+            next(error);
+        }
+    },
 };
 
 module.exports = productController;

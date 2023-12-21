@@ -50,14 +50,28 @@ const forgotPassword = async(req, res, next) => {
 }
 
 const resetPassword = async(req, res, next) => {
-    try {
-        await authService.resetPassword(req.body)
-        res.status(HttpStatus.OK).json({ message: "Password updated" });
-    } catch (error) {
-        next(error)
+        try {
+            await authService.resetPassword(req.body)
+            res.status(HttpStatus.OK).json({ message: "Password updated" });
+        } catch (error) {
+            next(error)
 
+        }
     }
-}
+    //User Search Controller
+const searchUsers = async(req, res, next) => {
+    try {
+        const searchTerm = req.query.search;
+        if (!searchTerm) {
+            return res.status(400).json({ message: "Search term is required" });
+        }
+
+        const users = await authService.searchUsers(searchTerm);
+        res.status(200).json(users);
+    } catch (error) {
+        next(error);
+    }
+};
 
 module.exports = {
     register,
@@ -65,6 +79,7 @@ module.exports = {
     forgotPassword,
     resetPassword,
     sendVerificationCode,
-    verifyCode
+    verifyCode,
+    searchUsers
 
 };
