@@ -8,7 +8,7 @@ const createCategory = async(req, res, next) => {
 
         // req.file is where the uploaded file data will be
         const category = await CategoryService.createCategory(req.body, req.file);
-        res.status(201).json(category);
+        res.status(HttpStatus.CREATED).json({ message: "Category added successfully", category });
 
     } catch (error) {
         next(error)
@@ -21,11 +21,11 @@ const getCategory = async(req, res) => {
     try {
         const category = await CategoryService.getCategoryById(req.params.id);
         if (!category) {
-            return res.status(404).json({ message: 'Category not found' });
+            res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", category });
         }
         res.json(category);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        next(error)
     }
 };
 
@@ -34,11 +34,12 @@ const updateCategory = async(req, res) => {
     try {
         const updatedCategory = await CategoryService.updateCategory(req.params.id, req.body, req.file);
         if (!updatedCategory) {
-            return res.status(404).json({ message: 'Category not found' });
+            res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", category });
+
         }
         res.json(updatedCategory);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        next(error)
     }
 };
 
@@ -48,11 +49,22 @@ const deleteCategory = async(req, res) => {
     try {
         const categoryToDelete = await CategoryService.deleteCategory(req.params.id);
         if (!categoryToDelete) {
-            return res.status(404).json({ message: 'Category not found' });
+            res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", category });
         }
         res.status(200).json({ message: 'Category deleted' });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        next(error)
+    }
+};
+
+// Search Category
+const searchCategory = async(req, res, next) => {
+    try {
+        const searchTerm = req.query.name;
+        const categories = await CategoryService.searchCategoriesByName(searchTerm);
+        res.status(HttpStatus.OK).json(categories);
+    } catch (error) {
+        next(error);
     }
 };
 
@@ -60,5 +72,6 @@ module.exports = {
     createCategory,
     getCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    searchCategory
 };
