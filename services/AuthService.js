@@ -7,18 +7,25 @@ const { Error, Op } = require('sequelize');
 const crypto = require('crypto');
 const { forgotPasswordMail } = require('../utils/EmailService')
 const sendSms = require('../utils/SmsService')
-
+const { getUrl } = require('../utils/getFullUrl')
 
 function generateRandomNumber() {
     return Math.floor(1000 + Math.random() * 9000); // Generates a number between 1000 and 9999
 }
 
 
-const register = async(userData) => {
+const register = async (userData) => {
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailRegex.test(userData.email)) {
         throw new Error('invalid email format');
+    }
+    // Check for Admin Role
+    if (userData.role === 'admin') {
+        const existingAdmin = await User.findOne({ where: { role: 'admin' } });
+        if (existingAdmin) {
+            throw new Error(`Can't register as an admin`)
+        }
     }
     // Encrypt user password
     if (!userData.password) {
@@ -39,7 +46,7 @@ const register = async(userData) => {
 
 };
 
-const sendVerificationCode = async(body) => {
+const sendVerificationCode = async (body) => {
 
     const user = await User.findOne({ where: { email: body.email } });
     if (user) {
@@ -52,7 +59,7 @@ const sendVerificationCode = async(body) => {
         throw new Error('user not found')
     }
 };
-const verifyCode = async(body) => {
+const verifyCode = async (body) => {
     const user = await User.findOne({ where: { email: body.email } });
     if (user) {
         // Check if the provided code matches the one in the database
@@ -71,17 +78,10 @@ const verifyCode = async(body) => {
     }
 };
 
-const login = async(body) => {
-    const { email, password } = body
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!emailRegex.test(email)) {
-        throw new Error('invalid email format');
-    }
-    const user = await User.findOne({ where: { email: email } });
-    if (!user) {
-        throw new Error('user not found');
-    }
-
+const login = async (req) => {
+    const { email, password } = req.body
+    const url = getUrl(req);
+    const user = await checkUserRedirection(url, req)
 
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid) {
@@ -102,17 +102,35 @@ const login = async(body) => {
     return userForToken;
 
 }
+const checkUserRedirection = async (url, req) => {
 
-const forgotPassword = async(body) => {
-    const { email } = body
-    const user = await User.findOne({ where: { email: email } });
+    let { email } = req.body;
+
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailRegex.test(email)) {
         throw new Error('invalid email format');
     }
+    const user = await User.findOne({ where: { email: email } });
     if (!user) {
         throw new Error('user not found');
     }
+
+    let role = user.role
+    // if (process.env.APP_LESSOR_URL === url && role === 'user') {
+    if (process.env.APP_URL === url) {
+        return user
+    }
+    // else if (process.env.APP_VENDOR_URL === url && (role === 'vendor' || 'admin')) {
+    else if (process.env.APP_LESSOR_URL === url && (role === 'admin')) {
+        return user
+    }
+    throw new Error('user not found');
+
+}
+
+const forgotPassword = async (req) => {
+    const url = getUrl(req);
+    const user = await checkUserRedirection(url, req)
 
     const resetToken = crypto.randomBytes(20).toString('hex');
     const tokenExpiry = Date.now() + 3600000; // 1 hour
@@ -132,8 +150,8 @@ const forgotPassword = async(body) => {
         resetTokenRecord.expiresAt = tokenExpiry;
         await resetTokenRecord.save();
     }
-
-    const resetUrl = `${process.env.APP_URL}/resetPassword?user_id=${user.id}&token=${resetToken}`;
+    let resetUrl = user.role == 'lessee' ? `${process.env.APP_URL}/resetPassword?user_id=${user.id}&token=${resetToken}`
+        : `${process.env.APP_LESSOR_URL}/resetPassword?user_id=${user.id}&token=${resetToken}`
 
     const mailOptions = {
         from: process.env.TRANSPORTER_USER,
@@ -148,7 +166,7 @@ const forgotPassword = async(body) => {
 
     await forgotPasswordMail(mailOptions);
 };
-const resetPassword = async(body) => {
+const resetPassword = async (body) => {
     // Find the password reset token record
     const { token, password, user_id, confirm_password } = body
     const resetTokenRecord = await PasswordResetToken.findOne({
@@ -188,30 +206,32 @@ const resetPassword = async(body) => {
 
 //Search user 
 
-const searchUsers = async(searchTerm) => {
+const searchUsers = async (searchTerm) => {
     const users = await User.findAll({
         where: {
             [Op.or]: [{
-                    name: {
-                        [Op.like]: `%${searchTerm}%`
-                    }
-                },
-                {
-                    email: {
-                        [Op.like]: `%${searchTerm}%`
-                    }
-                },
-                {
-                    phone: {
-                        [Op.like]: `%${searchTerm}%`
-                    }
+                name: {
+                    [Op.like]: `%${searchTerm}%`
                 }
+            },
+            {
+                email: {
+                    [Op.like]: `%${searchTerm}%`
+                }
+            },
+            {
+                phone: {
+                    [Op.like]: `%${searchTerm}%`
+                }
+            }
             ]
         }
     });
 
     return users;
 };
+
+
 
 module.exports = {
     register,
@@ -220,5 +240,6 @@ module.exports = {
     resetPassword,
     sendVerificationCode,
     verifyCode,
-    searchUsers
+    searchUsers,
+    checkUserRedirection
 };
