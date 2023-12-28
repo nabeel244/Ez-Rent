@@ -18,18 +18,19 @@ const productService = {
     async createProduct(data, imageFiles) {
 
         // Handle featured image upload
+        // console.log(data, 'thii is data');
         if (imageFiles.featuredImage) {
             const featuredImageResult = await uploadImageToCloudinary(imageFiles.featuredImage.path);
             data.featuredImagePath = featuredImageResult.path;
             data.featuredImageName = featuredImageResult.name;
         }
-
+            
         // Handle multiple images upload
-        if (imageFiles.images && imageFiles.images.length > 0) {
-            const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file.path)));
-            data.images = imagesResults; // 'images' should be an array of { path, name }
-        }
-
+        // if (imageFiles.images && imageFiles.images.length > 0) {
+        //     const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file.path)));
+        //     data.images = imagesResults; // 'images' should be an array of { path, name }
+        // }
+   console.log(featuredImageResult,'this is the datad')
         const product = await Product.create(data);
         return product;
     },

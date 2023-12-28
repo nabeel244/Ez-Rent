@@ -33,7 +33,7 @@ const User = sequelize.define('users', {
   },
   role: {
     type: DataTypes.ENUM,
-    values: ['lessee', 'lessor']   //lessee mean user, and lessor mean vendor
+    values: ['lessee', 'lessor','admin']   //lessee mean user, and lessor mean vendor
 
   }
 }, {

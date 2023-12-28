@@ -31,7 +31,7 @@ const verifyCode = async(req, res, next) => {
 
 const login = async(req, res, next) => {
     try {
-        const user = await authService.login(req.body)
+        const user = await authService.login(req)
         res.status(HttpStatus.OK).json({ message: "Login successfully", user });
 
     } catch (error) {
@@ -41,7 +41,7 @@ const login = async(req, res, next) => {
 
 const forgotPassword = async(req, res, next) => {
     try {
-        await authService.forgotPassword(req.body)
+        await authService.forgotPassword(req)
         res.status(HttpStatus.OK).json({ message: "Reset link send to your email" });
 
     } catch (error) {
