@@ -17,7 +17,7 @@ const createCategory = async(req, res, next) => {
 
 
 //Get Category
-const getCategory = async(req, res) => {
+const getCategory = async(req, res, next) => {
     try {
         const category = await CategoryService.getCategoryById(req.params.id);
         if (!category) {
@@ -30,11 +30,11 @@ const getCategory = async(req, res) => {
 };
 
 //Update Category
-const updateCategory = async(req, res) => {
+const updateCategory = async(req, res, next) => {
     try {
         const updatedCategory = await CategoryService.updateCategory(req.params.id, req.body, req.file);
         if (!updatedCategory) {
-            res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", category });
+            res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", updatedCategory });
 
         }
         res.json(updatedCategory);
@@ -45,13 +45,13 @@ const updateCategory = async(req, res) => {
 
 
 //Delete Category
-const deleteCategory = async(req, res) => {
+const deleteCategory = async(req, res, next) => {
     try {
         const categoryToDelete = await CategoryService.deleteCategory(req.params.id);
         if (!categoryToDelete) {
-            res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", category });
+            res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", categoryToDelete });
         }
-        res.status(200).json({ message: 'Category deleted' });
+        res.json(categoryToDelete);
     } catch (error) {
         next(error)
     }
@@ -60,10 +60,14 @@ const deleteCategory = async(req, res) => {
 // Search Category
 const searchCategory = async(req, res, next) => {
     try {
-        const searchTerm = req.query.name;
-        const categories = await CategoryService.searchCategoriesByName(searchTerm);
-        res.status(HttpStatus.OK).json(categories);
+        // const searchTerm = req.query.name;
+
+        const categories = await CategoryService.searchCategoriesByName(req);
+        // res.status(HttpStatus.OK).json(categories);
+        res.status(HttpStatus.OK).json({ message: "Category Found", categories });
+
     } catch (error) {
+        console.log(error.message);
         next(error);
     }
 };

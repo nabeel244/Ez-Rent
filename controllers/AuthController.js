@@ -61,13 +61,12 @@ const resetPassword = async(req, res, next) => {
     //User Search Controller
 const searchUsers = async(req, res, next) => {
     try {
-        const searchTerm = req.query.search;
+        const searchTerm = req.body;
         if (!searchTerm) {
-            return res.status(400).json({ message: "Search term is required" });
+            res.status(HttpStatus.OK).json({ message: "Search Term is required" });
         }
-
         const users = await authService.searchUsers(searchTerm);
-        res.status(200).json(users);
+        res.status(HttpStatus.OK).json(users);
     } catch (error) {
         next(error);
     }

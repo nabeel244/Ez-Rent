@@ -8,7 +8,7 @@ const router = express.Router();
 const fileHandlingMiddleware = require('../middlewares/FileHandlingMiddleware'); // Adjust the path as necessary
 
 // POST request to create a new product
-router.post('/',fileHandlingMiddleware,  productController.createProduct);
+router.post('/', fileHandlingMiddleware, productController.createProduct);
 // router.post('/', authenticateToken, checkRole(['lessor']), productController.createProduct);
 
 router.get('/products/:id', authenticateToken, checkRole(['lessor', 'lessee']), productController.getProduct);

@@ -1,7 +1,9 @@
 // services/CategoryService.js
 
 const Category = require("../models/Category");
-const cloudinary = require('../utils/cloudinary')
+const cloudinary = require('../utils/cloudinary');
+const { Op } = require('sequelize'); // Import Op from Sequelize
+
 
 
 const uploadImageToCloudinary = async(file) => {
@@ -82,15 +84,16 @@ const deleteCategory = async(id) => {
 };
 
 // Search Category
-const searchCategoriesByName = async(searchTerm) => {
-    if (!searchTerm) {
-        throw new Error('Search term is required');
+const searchCategoriesByName = async(req) => {
+    const { name } = req.body;
+    if (!name) {
+        throw new Error('Name is required');
     }
 
     return await Category.findAll({
         where: {
             name: {
-                [Op.like]: `%${searchTerm}%` // Use Op.like for partial matching
+                [Op.like]: `%${name}%` // Use Op.like for partial matching
             }
         }
     });
