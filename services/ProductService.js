@@ -16,6 +16,7 @@ const uploadImageToCloudinary = async(imagePath) => {
 
 const productService = {
     async createProduct(data, imageFiles) {
+
         // Handle featured image upload
         if (imageFiles.featuredImage) {
             const featuredImageResult = await uploadImageToCloudinary(imageFiles.featuredImage.path);
@@ -55,7 +56,7 @@ const productService = {
         }
 
         // Update multiple images if provided
-        if (imageFiles.images && imageFiles.images.length > 0) {
+        if (imageFiles.images && Array.isArray(imageFiles.images) && imageFiles.images.length > 0) {
             const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file.path)));
             updateData.images = imagesResults;
         }

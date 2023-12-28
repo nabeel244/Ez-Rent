@@ -7,7 +7,7 @@ const checkRole = require('../middlewares/RoleMiddleware')
 const router = express.Router();
 
 // POST request to create a new product
-router.post('/products', authenticateToken, checkRole(['lessor']), productController.createProduct);
+router.post('/', productController.createProduct);
 
 router.get('/products/:id', authenticateToken, checkRole(['lessor', 'lessee']), productController.getProduct);
 
