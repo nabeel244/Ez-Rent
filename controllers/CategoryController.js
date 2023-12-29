@@ -43,14 +43,8 @@ const getCategory = async (req, res, next) => {
 //Update Category
 const updateCategory = async (req, res, next) => {
     try {
-
-        const updatedCategory = await CategoryService.updateCategory(req.body.id, req.body, req.file);
-        if (!updatedCategory) {
-            res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", updatedCategory });
-
-        }
-        res.json(updatedCategory);
-
+        const updatedCategory = await CategoryService.updateCategory(req.body, req.file);
+        res.status(HttpStatus.OK).json({ message: "Category updated successfully", updatedCategory });
     } catch (error) {
         next(error)
     }
