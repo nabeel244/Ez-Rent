@@ -16,19 +16,20 @@ const uploadImageToCloudinary = async(imagePath) => {
 
 const productService = {
     async createProduct(data, imageFiles) {
+
         // Handle featured image upload
+        // console.log(data, 'thii is data');
         if (imageFiles.featuredImage) {
             const featuredImageResult = await uploadImageToCloudinary(imageFiles.featuredImage.path);
             data.featuredImagePath = featuredImageResult.path;
             data.featuredImageName = featuredImageResult.name;
         }
-
+            
         // Handle multiple images upload
-        if (imageFiles.images && imageFiles.images.length > 0) {
-            const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file.path)));
-            data.images = imagesResults; // 'images' should be an array of { path, name }
-        }
-
+        // if (imageFiles.images && imageFiles.images.length > 0) {
+        //     const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file.path)));
+        //     data.images = imagesResults; // 'images' should be an array of { path, name }
+        // }
         const product = await Product.create(data);
         return product;
     },
@@ -55,7 +56,7 @@ const productService = {
         }
 
         // Update multiple images if provided
-        if (imageFiles.images && imageFiles.images.length > 0) {
+        if (imageFiles.images && Array.isArray(imageFiles.images) && imageFiles.images.length > 0) {
             const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file.path)));
             updateData.images = imagesResults;
         }
@@ -76,7 +77,28 @@ const productService = {
     async getAllProducts() {
         const products = await Product.findAll();
         return products;
-    }
+    },
+    async searchProducts(searchParams) {
+        let whereConditions = {};
+
+        if (searchParams.categoryId) {
+            whereConditions.categoryId = searchParams.categoryId;
+        }
+
+        if (searchParams.userId) {
+            whereConditions.userId = searchParams.userId;
+        }
+
+        const products = await Product.findAll({
+            where: whereConditions,
+            include: [
+                // Include other models here if necessary, like Category or User
+            ]
+        });
+
+        return products;
+    },
+
 };
 
 module.exports = productService;

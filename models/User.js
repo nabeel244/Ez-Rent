@@ -4,7 +4,8 @@ const sequelize = require('../database');
 const User = sequelize.define('users', {
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    unique: true
   },
   email: {
     type: DataTypes.STRING,
@@ -32,7 +33,7 @@ const User = sequelize.define('users', {
   },
   role: {
     type: DataTypes.ENUM,
-    values: ['lessee', 'lessor']   //lessee mean user, and lessor mean vendor
+    values: ['lessee', 'lessor','admin']   //lessee mean user, and lessor mean vendor
 
   }
 }, {

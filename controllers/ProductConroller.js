@@ -1,20 +1,26 @@
 // controllers/productController.js
 
 const productService = require('../services/ProductService');
-
+const HttpStatus = require('../utils/ResponseStatus')
 
 const productController = {
-    async createProduct(req, res) {
+    async createProduct(req, res, next) {
         try {
+            console.log(req.body, req.file, req.files);
             // Assuming 'featuredImage' and 'images' are the field names for the uploaded files
+
             const imageFiles = {
                 featuredImage: req.file, // if there's a single featured image
-                images: req.files.images // if there are multiple images
+                // images: req.files.images // if there are multiple images
             };
+            // console.log(imageFiles, 'hhhh')
+
             const product = await productService.createProduct(req.body, imageFiles);
-            res.status(201).json(product);
+
+            res.status(HttpStatus.CREATED).json({ message: "Product created successfully", product });
+
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            next(error)
         }
     },
 
@@ -24,7 +30,7 @@ const productController = {
             const product = await productService.getProductById(productId);
             res.json(product);
         } catch (error) {
-            res.status(404).json({ message: error.message });
+            next(error)
         }
     },
 
@@ -39,7 +45,7 @@ const productController = {
             const updatedProduct = await productService.updateProduct(productId, req.body, imageFiles);
             res.json(updatedProduct);
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            next(error)
         }
     },
 
@@ -49,7 +55,7 @@ const productController = {
             const response = await productService.deleteProduct(productId);
             res.json(response);
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            next(error)
         }
     },
 
@@ -60,7 +66,16 @@ const productController = {
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
-    }
+    },
+    async searchProducts(req, res) {
+        try {
+            const { categoryId, userId } = req.query;
+            const products = await productService.searchProducts({ categoryId, userId });
+            res.json(products);
+        } catch (error) {
+            next(error);
+        }
+    },
 };
 
 module.exports = productController;

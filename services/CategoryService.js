@@ -1,26 +1,25 @@
 // services/CategoryService.js
 
 const Category = require("../models/Category");
-const cloudinary = require('../utils/cloudinary')
+const cloudinary = require('../utils/cloudinary');
+const { Op } = require('sequelize'); // Import Op from Sequelize
+
 
 
 const uploadImageToCloudinary = async (file) => {
     try {
-        // Return a promise that resolves when the upload is complete
         return new Promise((resolve, reject) => {
-            // Create an upload stream
             const uploadStream = cloudinary.uploader.upload_stream({
-                resource_type: 'auto'
+                resource_type: 'auto',
+                public_id: file.originalname.split('.')[0] // This sets the public_id to the original filename without extension
             }, (error, result) => {
                 if (error) {
                     reject(error);
                 } else {
-                    console.log(result)
-                    resolve({ path: result.url, name: result.original_filename });
+                    resolve({ path: result.url, name: file.originalname }); // Use file.originalname to get the original file name
                 }
             });
 
-            // Write file buffer to the stream
             uploadStream.end(file.buffer);
         });
     } catch (error) {
@@ -33,11 +32,9 @@ const uploadImageToCloudinary = async (file) => {
 
 const createCategory = async (body, imageFile) => {
     const { name } = body;
-    console.log(imageFile)
     let image_path, image_name;
     if (imageFile) {
         const uploadResult = await uploadImageToCloudinary(imageFile);
-        console.log(uploadResult, 'this is the result')
         image_path = uploadResult.path;
         image_name = uploadResult.name;
     }
@@ -46,31 +43,39 @@ const createCategory = async (body, imageFile) => {
 
 };
 
+const allCategories = async () => {
+    return await Category.findAll();
+}
 
 //Get Category
 const getCategoryById = async (id) => {
-    return await Category.findById(id);
+    return await Category.findByPk(id);
 };
 
 //Update Category
 
-const updateCategory = async (id, body, imageFile) => {
-    const { name } = body;
-
+const updateCategory = async (body, imageFile) => {
+    const { name, id, comment } = body;
     const category = await Category.findByPk(id);
-
-    if (category) {
-        category.name = name || category.name;
-
-        if (imageFile) {
-            const uploadResult = await uploadImageToCloudinary(imageFile.path);
-            category.imagePath = uploadResult.path;
-            category.imageName = uploadResult.name;
-        }
-
-        await category.save();
+    if (!category) {
+        throw new Error('Category not found');
     }
-    return category;
+    if (comment) {
+        category.comment = comment
+        return await category.save()
+    }
+    // Update category details
+    category.name = name;
+
+    // If an image file is provided, upload it and update category image details
+    if (imageFile) {
+        const uploadResult = await uploadImageToCloudinary(imageFile);
+        category.image_path = uploadResult.path;
+        category.image_name = uploadResult.name;
+    }
+    console.log(category)
+    return await category.save();
+
 };
 
 
@@ -83,9 +88,27 @@ const deleteCategory = async (id) => {
     return category;
 };
 
+// Search Category
+const searchCategoriesByName = async (req) => {
+    const { name } = req.body;
+    if (!name) {
+        throw new Error('Name is required');
+    }
+
+    return await Category.findAll({
+        where: {
+            name: {
+                [Op.like]: `%${name}%` // Use Op.like for partial matching
+            }
+        }
+    });
+};
+
 module.exports = {
     createCategory,
     getCategoryById,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    searchCategoriesByName,
+    allCategories
 };
