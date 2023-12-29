@@ -6,7 +6,7 @@ const { Op } = require('sequelize'); // Import Op from Sequelize
 
 
 
-const uploadImageToCloudinary = async(file) => {
+const uploadImageToCloudinary = async (file) => {
     try {
         return new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream({
@@ -16,7 +16,6 @@ const uploadImageToCloudinary = async(file) => {
                 if (error) {
                     reject(error);
                 } else {
-                    console.log(result);
                     resolve({ path: result.url, name: file.originalname }); // Use file.originalname to get the original file name
                 }
             });
@@ -31,13 +30,11 @@ const uploadImageToCloudinary = async(file) => {
 
 //Create Category
 
-const createCategory = async(body, imageFile) => {
+const createCategory = async (body, imageFile) => {
     const { name } = body;
-    console.log(imageFile)
     let image_path, image_name;
     if (imageFile) {
         const uploadResult = await uploadImageToCloudinary(imageFile);
-        console.log(uploadResult, 'this is the result')
         image_path = uploadResult.path;
         image_name = uploadResult.name;
     }
@@ -46,36 +43,44 @@ const createCategory = async(body, imageFile) => {
 
 };
 
+const allCategories = async () => {
+    return await Category.findAll();
+}
 
 //Get Category
-const getCategoryById = async(id) => {
+const getCategoryById = async (id) => {
     return await Category.findByPk(id);
 };
 
 //Update Category
 
-const updateCategory = async(id, body, imageFile) => {
-    const { name } = body;
-
+const updateCategory = async (body, imageFile) => {
+    const { name, id, comment } = body;
     const category = await Category.findByPk(id);
-
-    if (category) {
-        category.name = name || category.name;
-
-        if (imageFile) {
-            const uploadResult = await uploadImageToCloudinary(imageFile);
-            category.imagePath = uploadResult.path;
-            category.imageName = uploadResult.name;
-        }
-
-        await category.save();
+    if (!category) {
+        throw new Error('Category not found');
     }
-    return category;
+    if (comment) {
+        category.comment = comment
+        return await category.save()
+    }
+    // Update category details
+    category.name = name;
+
+    // If an image file is provided, upload it and update category image details
+    if (imageFile) {
+        const uploadResult = await uploadImageToCloudinary(imageFile);
+        category.image_path = uploadResult.path;
+        category.image_name = uploadResult.name;
+    }
+    console.log(category)
+    return await category.save();
+
 };
 
 
 //Delete Category
-const deleteCategory = async(id) => {
+const deleteCategory = async (id) => {
     const category = await Category.findByPk(id);
     if (category) {
         await category.destroy();
@@ -84,7 +89,7 @@ const deleteCategory = async(id) => {
 };
 
 // Search Category
-const searchCategoriesByName = async(req) => {
+const searchCategoriesByName = async (req) => {
     const { name } = req.body;
     if (!name) {
         throw new Error('Name is required');
@@ -104,5 +109,6 @@ module.exports = {
     getCategoryById,
     updateCategory,
     deleteCategory,
-    searchCategoriesByName
+    searchCategoriesByName,
+    allCategories
 };

@@ -30,7 +30,6 @@ const productService = {
         //     const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file.path)));
         //     data.images = imagesResults; // 'images' should be an array of { path, name }
         // }
-   console.log(featuredImageResult,'this is the datad')
         const product = await Product.create(data);
         return product;
     },
