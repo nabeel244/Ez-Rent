@@ -24,9 +24,9 @@ const productController = {
         }
     },
 
-    async getProduct(req, res) {
+    async getProduct(req, res, next) {
         try {
-            const productId = req.params.id;
+            const productId = req.body.id;
             const product = await productService.getProductById(productId);
             res.json(product);
         } catch (error) {
@@ -34,9 +34,9 @@ const productController = {
         }
     },
 
-    async updateProduct(req, res) {
+    async updateProduct(req, res, next) {
         try {
-            const productId = req.params.id;
+            const productId = req.body.id;
             const imageFiles = {
                 featuredImage: req.file,
                 images: req.files.images
@@ -49,9 +49,9 @@ const productController = {
         }
     },
 
-    async deleteProduct(req, res) {
+    async deleteProduct(req, res, next) {
         try {
-            const productId = req.params.id;
+            const productId = req.body.id;
             const response = await productService.deleteProduct(productId);
             res.json(response);
         } catch (error) {

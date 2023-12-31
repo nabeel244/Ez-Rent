@@ -10,9 +10,9 @@ const router = express.Router();
 
 router.get('/search', authenticateToken, checkRole(['lessor', 'admin']), CategoryController.searchCategory); // Adjust roles as necessary
 router.post('/create', authenticateToken, checkRole(['admin']), fileHandlingMiddleware, CategoryController.createCategory);
-router.get('/:id', authenticateToken, checkRole(['lessor']), CategoryController.getCategory);
-router.put('/:id', authenticateToken, checkRole(['admin']), fileHandlingMiddleware, CategoryController.updateCategory);
-router.delete('/:id', authenticateToken, checkRole(['admin']), CategoryController.deleteCategory);
+router.get('/get', authenticateToken, checkRole(['lessor']), CategoryController.getCategory);
+router.put('/update', authenticateToken, checkRole(['admin']), fileHandlingMiddleware, CategoryController.updateCategory);
+router.delete('/delete', authenticateToken, checkRole(['admin']), CategoryController.deleteCategory);
 
 
 module.exports = router;

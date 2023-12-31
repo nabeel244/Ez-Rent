@@ -19,7 +19,7 @@ const createCategory = async(req, res, next) => {
 //Get Category
 const getCategory = async(req, res, next) => {
     try {
-        const category = await CategoryService.getCategoryById(req.params.id);
+        const category = await CategoryService.getCategoryById(req.body.id);
         if (!category) {
             res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", category });
         }
@@ -32,7 +32,7 @@ const getCategory = async(req, res, next) => {
 //Update Category
 const updateCategory = async(req, res, next) => {
     try {
-        const updatedCategory = await CategoryService.updateCategory(req.params.id, req.body, req.file);
+        const updatedCategory = await CategoryService.updateCategory(req.body.id, req.body, req.file);
         if (!updatedCategory) {
             res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", updatedCategory });
 
@@ -47,7 +47,7 @@ const updateCategory = async(req, res, next) => {
 //Delete Category
 const deleteCategory = async(req, res, next) => {
     try {
-        const categoryToDelete = await CategoryService.deleteCategory(req.params.id);
+        const categoryToDelete = await CategoryService.deleteCategory(req.body.id);
         if (!categoryToDelete) {
             res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", categoryToDelete });
         }
