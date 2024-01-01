@@ -15,7 +15,15 @@ const Category = sequelize.define('categories', {
         type: DataTypes.STRING,
         allowNull: true, // Allow null if the image name is not mandatory
         defaultValue: null
-    }
+    },
+    comment: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    status: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
 }, {
     timestamps: true,
     createdAt: 'created_at',

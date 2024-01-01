@@ -11,11 +11,11 @@ const fileHandlingMiddleware = require('../middlewares/FileHandlingMiddleware');
 router.post('/', fileHandlingMiddleware, productController.createProduct);
 // router.post('/', authenticateToken, checkRole(['lessor']), productController.createProduct);
 
-router.get('/products/:id', authenticateToken, checkRole(['lessor', 'lessee']), productController.getProduct);
+router.get('/products/get', authenticateToken, checkRole(['lessor', 'lessee']), productController.getProduct);
 
-router.put('/products/:id', authenticateToken, checkRole(['lessor']), productController.updateProduct);
+router.put('/products/update', authenticateToken, checkRole(['lessor']), productController.updateProduct);
 
-router.delete('/products/:id', authenticateToken, checkRole(['lessor']), productController.deleteProduct);
+router.delete('/products/delete', authenticateToken, checkRole(['lessor']), productController.deleteProduct);
 
 router.get('/products', authenticateToken, checkRole(['lessor', 'admin']), productController.getAllProducts);
 
