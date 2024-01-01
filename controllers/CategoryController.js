@@ -18,7 +18,7 @@ const createCategory = async (req, res, next) => {
 const allCategories = async (req, res, next) => {
     try {
         const categories = await CategoryService.allCategories()
-        res.status(HttpStatus.CREATED).json({ message: "Categories fetch successfully", categories });
+        res.status(HttpStatus.OK).json({ message: "Categories fetch successfully", categories });
     } catch (error) {
         next(error)
     }
