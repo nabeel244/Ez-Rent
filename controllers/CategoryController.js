@@ -28,8 +28,13 @@ const allCategories = async (req, res, next) => {
 //Get Category
 const getCategory = async (req, res, next) => {
     try {
-        const category = await CategoryService.getCategoryById(req.params.id);
-        res.status(HttpStatus.OK).json({ message: "Category fetch successfully", category });
+
+        const category = await CategoryService.getCategoryById(req.body.id);
+        if (!category) {
+            res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", category });
+        }
+        res.json(category);
+
     } catch (error) {
         next(error)
     }
@@ -49,7 +54,7 @@ const updateCategory = async (req, res, next) => {
 //Delete Category
 const deleteCategory = async (req, res, next) => {
     try {
-        const categoryToDelete = await CategoryService.deleteCategory(req.params.id);
+        const categoryToDelete = await CategoryService.deleteCategory(req.body.id);
         if (!categoryToDelete) {
             res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", categoryToDelete });
         }
@@ -81,4 +86,4 @@ module.exports = {
     deleteCategory,
     searchCategory,
     allCategories
-};
+}

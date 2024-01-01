@@ -14,7 +14,9 @@ const User = sequelize.define('users', {
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+    defaultValue: '',
+
   },
   phone: {
     type: DataTypes.STRING
@@ -33,6 +35,7 @@ const User = sequelize.define('users', {
   },
   role: {
     type: DataTypes.ENUM,
+    defaultValue: 'lessee',
     values: ['lessee', 'lessor','admin']   //lessee mean user, and lessor mean vendor
 
   }
