@@ -3,43 +3,43 @@ const userService = require('../services/UserService');
 const HttpStatus = require('../utils/ResponseStatus')
 
 
-const getUsers = async(req, res) => {
+const getUsers = async(req, res,next) => {
     try {
         const users = await userService.getAllUsers();
-        res.json(users);
+        res.status(HttpStatus.OK).json({ message: "Users fetch successfully", users });
     } catch (err) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err.message);
+        next(err)
     }
 };
 
-const createUser = async(req, res) => {
+const createUser = async(req, res,next) => {
     try {
         const newUser = await userService.createUser(req.body)
         res.status(HttpStatus.CREATED).json({ message: "User created successfully", user: newUser });
     } catch (err) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
+       next(err)
     }
 };
 
-const updateUser = async(req, res) => {
+const updateUser = async(req, res,next) => {
     try {
         const updatedUser = await userService.updateUser(req.params.id, req.body);
         res.json({ message: "User updated successfully", user: updatedUser });
     } catch (err) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err.message);
+        next(err)
     }
 };
 
-const deleteUser = async(req, res) => {
+const deleteUser = async(req, res,next) => {
     try {
         await userService.deleteUser(req.params.id);
         res.json({ message: "User deleted successfully" });
     } catch (err) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err.message);
+       next(err)
     }
 };
 
-const getUser = async(req, res) => {
+const getUser = async(req, res,next) => {
     try {
         const user = await userService.getUserById(req.params.id);
         if (user) {
@@ -48,7 +48,7 @@ const getUser = async(req, res) => {
             res.status(HttpStatus.NOT_FOUND).send("User not found");
         }
     } catch (err) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err.message);
+       next(err)
     }
 };
 module.exports = {
