@@ -12,7 +12,7 @@ const Product = sequelize.define('products', {
         allowNull: false
     },
     price: {
-        type: DataTypes.DECIMAL(10, 2), // Assuming price is a decimal
+        type: DataTypes.DECIMAL(10, 2), 
         allowNull: false
     },
     total_quantity: {
@@ -21,11 +21,12 @@ const Product = sequelize.define('products', {
     },
     remaining_quantity: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true,
+        defaultValue: 0
     },
     tagline: {
         type: DataTypes.STRING,
-        allowNull: true // Tagline can be optional
+        allowNull: true 
     },
     collection_fee: {
         type: DataTypes.DECIMAL(10, 2),

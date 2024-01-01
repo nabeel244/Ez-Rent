@@ -1,13 +1,26 @@
 // services/productService.js
 const cloudinary = require('cloudinary').v2;
 const Product = require('../models/Product');
+const slugify = require('slugify');
+
 // Add other models if necessary
 
-//Helper Function to upload images in cloudianry
-const uploadImageToCloudinary = async(imagePath) => {
+const uploadImageToCloudinary = async (file) => {
     try {
-        const result = await cloudinary.uploader.upload(imagePath);
-        return { path: result.url, name: result.original_filename };
+        return new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream({
+                resource_type: 'auto',
+                public_id: file.originalname.split('.')[0] // This sets the public_id to the original filename without extension
+            }, (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve({ path: result.url, name: file.originalname }); // Use file.originalname to get the original file name
+                }
+            });
+
+            uploadStream.end(file.buffer);
+        });
     } catch (error) {
         console.error('Error uploading to Cloudinary', error);
         throw error;
@@ -15,23 +28,33 @@ const uploadImageToCloudinary = async(imagePath) => {
 };
 
 const productService = {
-    async createProduct(data, imageFiles) {
+    async createProduct(data, filesData) {
 
-        // Handle featured image upload
-        // console.log(data, 'thii is data');
+        const imageFiles = {
+            featuredImage: filesData.image, // if there's a single featured image
+            images: filesData.images // if there are multiple images
+        };
+        if (data.title) {
+            // Creating a slug from the title
+            data.slug = slugify(data.title, {
+                lower: true,      // Convert to lower case
+                strict: true,     // Strip special characters
+                remove: /[*+~.()'"!:@]/g // Additional characters to remove
+            });
+        }
+        data.remaining_quantity = 0
         if (imageFiles.featuredImage) {
-            const featuredImageResult = await uploadImageToCloudinary(imageFiles.featuredImage.path);
+            const featuredImageResult = await uploadImageToCloudinary(imageFiles.featuredImage[0]);
             data.featuredImagePath = featuredImageResult.path;
             data.featuredImageName = featuredImageResult.name;
         }
-            
         // Handle multiple images upload
-        // if (imageFiles.images && imageFiles.images.length > 0) {
-        //     const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file.path)));
-        //     data.images = imagesResults; // 'images' should be an array of { path, name }
-        // }
-        const product = await Product.create(data);
-        return product;
+        if (imageFiles.images && imageFiles.images.length > 0) {
+            const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file)));
+            data.images = imagesResults; // 'images' should be an array of { path, name }
+        }
+        return await Product.create(data);
+
     },
 
     async getProductById(productId) {

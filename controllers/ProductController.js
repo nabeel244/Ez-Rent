@@ -6,17 +6,7 @@ const HttpStatus = require('../utils/ResponseStatus')
 const productController = {
     async createProduct(req, res, next) {
         try {
-            console.log(req.body, req.file, req.files);
-            // Assuming 'featuredImage' and 'images' are the field names for the uploaded files
-
-            const imageFiles = {
-                featuredImage: req.file, // if there's a single featured image
-                // images: req.files.images // if there are multiple images
-            };
-            // console.log(imageFiles, 'hhhh')
-
-            const product = await productService.createProduct(req.body, imageFiles);
-
+            const product = await productService.createProduct(req.body, req.files);
             res.status(HttpStatus.CREATED).json({ message: "Product created successfully", product });
 
         } catch (error) {
@@ -62,7 +52,8 @@ const productController = {
     async getAllProducts(req, res) {
         try {
             const products = await productService.getAllProducts();
-            res.json(products);
+            res.status(HttpStatus.OK).json({ message: "Products fetch successfully", products });
+
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
