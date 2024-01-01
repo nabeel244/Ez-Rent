@@ -86,4 +86,4 @@ module.exports = {
     deleteCategory,
     searchCategory,
     allCategories
-};
+}
