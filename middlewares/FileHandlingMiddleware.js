@@ -15,7 +15,6 @@ const upload = multer({
     }
 }).single('image'); // 'image' is the name of the input field
 
-console.log(upload,'hthhtthh')
 // Check file type
 function checkFileType(file, cb) {
     // Allowed file types

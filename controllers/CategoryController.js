@@ -3,7 +3,7 @@ const CategoryService = require("../services/CategoryService");
 const HttpStatus = require('../utils/ResponseStatus')
 
 //Create Category
-const createCategory = async(req, res, next) => {
+const createCategory = async (req, res, next) => {
     try {
 
         // req.file is where the uploaded file data will be
@@ -15,29 +15,42 @@ const createCategory = async(req, res, next) => {
     }
 };
 
+const allCategories = async (req, res, next) => {
+    try {
+        const categories = await CategoryService.allCategories()
+        res.status(HttpStatus.CREATED).json({ message: "Categories fetch successfully", categories });
+    } catch (error) {
+        next(error)
+    }
+}
+
 
 //Get Category
-const getCategory = async(req, res, next) => {
+const getCategory = async (req, res, next) => {
     try {
+
         const category = await CategoryService.getCategoryById(req.body.id);
         if (!category) {
             res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", category });
         }
         res.json(category);
+
     } catch (error) {
         next(error)
     }
 };
 
 //Update Category
-const updateCategory = async(req, res, next) => {
+const updateCategory = async (req, res, next) => {
     try {
+
         const updatedCategory = await CategoryService.updateCategory(req.body.id, req.body, req.file);
         if (!updatedCategory) {
             res.status(HttpStatus.NOT_FOUND).json({ message: "Category not found", updatedCategory });
 
         }
         res.json(updatedCategory);
+
     } catch (error) {
         next(error)
     }
@@ -45,7 +58,7 @@ const updateCategory = async(req, res, next) => {
 
 
 //Delete Category
-const deleteCategory = async(req, res, next) => {
+const deleteCategory = async (req, res, next) => {
     try {
         const categoryToDelete = await CategoryService.deleteCategory(req.body.id);
         if (!categoryToDelete) {
@@ -58,7 +71,7 @@ const deleteCategory = async(req, res, next) => {
 };
 
 // Search Category
-const searchCategory = async(req, res, next) => {
+const searchCategory = async (req, res, next) => {
     try {
         // const searchTerm = req.query.name;
 
@@ -77,5 +90,6 @@ module.exports = {
     getCategory,
     updateCategory,
     deleteCategory,
-    searchCategory
+    searchCategory,
+    allCategories
 };
