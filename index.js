@@ -9,7 +9,7 @@ const errorHandler = require('./middlewares/ErrorHandlerMiddleware')
 const passport = require('./utils/PassportStrategy')
 const session = require('express-session');
 const cors = require('cors')
-
+const setupDatabaseRelations = require('./models/Relations');
 
 const app = express();
 const sequelize = require('./database');
@@ -26,6 +26,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+setupDatabaseRelations();
 app.use(passport.initialize());
 app.use(passport.session());
 // sequelize.sync({ alter: true }).then(() => { // when you update your db , add or update you migration then you uncomment these
