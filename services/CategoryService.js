@@ -1,6 +1,7 @@
 // services/CategoryService.js
 
 const Category = require("../models/Category");
+const Product = require('../models/Product')
 const cloudinary = require('../utils/cloudinary');
 const { Op } = require('sequelize'); // Import Op from Sequelize
 
@@ -44,8 +45,15 @@ const createCategory = async (body, imageFile) => {
 };
 
 const allCategories = async () => {
-    return await Category.findAll();
-}
+    return await Category.findAll({
+        include: [
+            {
+                model: Product,
+                as: 'products',
+            },
+        ],
+    });
+};
 
 //Get Category
 const getCategoryById = async (id) => {

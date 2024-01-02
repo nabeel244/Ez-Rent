@@ -2,7 +2,8 @@
 const cloudinary = require('cloudinary').v2;
 const Product = require('../models/Product');
 const slugify = require('slugify');
-
+const Category = require('../models/Category');
+const User = require('../models/User');
 // Add other models if necessary
 
 const uploadImageToCloudinary = async (file) => {
@@ -98,7 +99,20 @@ const productService = {
     },
 
     async getAllProducts() {
-        const products = await Product.findAll();
+        const products = await Product.findAll({
+            include: [
+                {
+                    model : Category,
+                    as : 'category',
+                    attributes: ['id', 'name'],
+                },
+                {
+                    model : User,
+                    as : 'user',
+                    attributes: ['id', 'name', 'email','role']
+                }
+            ]
+        });
         return products;
     },
     async searchProducts(searchParams) {
