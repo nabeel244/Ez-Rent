@@ -9,7 +9,7 @@ const fileHandlingMiddleware = require('../middlewares/FileHandlingMiddleware');
 
 
 // POST request to create a new product
-router.post('/', fileHandlingMiddleware, productController.createProduct);
+router.post('/create', fileHandlingMiddleware, productController.createProduct);
 // router.post('/', authenticateToken, checkRole(['lessor']), productController.createProduct);
 
 router.get('/products/get', authenticateToken, checkRole(['lessor', 'lessee']), productController.getProduct);
@@ -18,7 +18,7 @@ router.put('/products/update', authenticateToken, checkRole(['lessor']), product
 
 router.delete('/products/delete', authenticateToken, checkRole(['lessor']), productController.deleteProduct);
 
-router.get('/all', authenticateToken, checkRole(['lessor', 'admin']), productController.getAllProducts);
+router.get('/all', productController.getAllProducts);
 
 router.get('/products/search', authenticateToken, checkRole(['lessor', 'lessee', 'admin']), productController.searchProducts);
 
