@@ -5,7 +5,7 @@ const productController = require('../controllers/ProductController');
 const authenticateToken = require('../middlewares/AuthMiddleware')
 const checkRole = require('../middlewares/RoleMiddleware')
 const router = express.Router();
-const fileHandlingMiddleware = require('../middlewares/FileHandlingMiddleware'); 
+const fileHandlingMiddleware = require('../middlewares/FileHandlingMiddleware');
 
 
 // POST request to create a new product
@@ -21,6 +21,5 @@ router.delete('/products/delete', authenticateToken, checkRole(['lessor']), prod
 router.get('/all', authenticateToken, checkRole(['lessor', 'admin']), productController.getAllProducts);
 
 router.get('/products/search', authenticateToken, checkRole(['lessor', 'lessee', 'admin']), productController.searchProducts);
-
 
 module.exports = router;
