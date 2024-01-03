@@ -1,5 +1,5 @@
 // services/PageService.js
-const { Page } = require('../models'); // Import the Sequelize model
+const { Page } = require('../models/Page'); // Import the Sequelize model
 
 const PageService = {
     async createPage(pageData) {
