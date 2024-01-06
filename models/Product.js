@@ -5,7 +5,7 @@ const Product = sequelize.define('products', {
     slug: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        // unique: true
     },
     title: {
         type: DataTypes.STRING,

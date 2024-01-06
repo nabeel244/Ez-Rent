@@ -1,6 +1,6 @@
 // services/WishlistService.js
-const { Wishlist } = require('../models/Wishlist'); // Make sure to import the Wishlist model
-
+// const { Wishlist } = require('../models/Wishlist'); // Make sure to import the Wishlist model
+const Wishlist = require('../models/Wishlist');
 const WishlistService = {
     async addToWishlist(userId, productId) {
         return await Wishlist.create({ userId, productId });
