@@ -1,6 +1,7 @@
 // services/CategoryService.js
 
 const Category = require("../models/Category");
+const Product = require('../models/Product')
 const cloudinary = require('../utils/cloudinary');
 const { Op } = require('sequelize'); // Import Op from Sequelize
 
@@ -34,7 +35,7 @@ const createCategory = async (body, imageFile) => {
     const { name } = body;
     let image_path, image_name;
     if (imageFile) {
-        const uploadResult = await uploadImageToCloudinary(imageFile);
+        const uploadResult = await uploadImageToCloudinary(imageFile[0]);
         image_path = uploadResult.path;
         image_name = uploadResult.name;
     }
@@ -44,8 +45,15 @@ const createCategory = async (body, imageFile) => {
 };
 
 const allCategories = async () => {
-    return await Category.findAll();
-}
+    return await Category.findAll({
+        include: [
+            {
+                model: Product,
+                as: 'products',
+            },
+        ],
+    });
+};
 
 //Get Category
 const getCategoryById = async (id) => {
@@ -69,7 +77,7 @@ const updateCategory = async (body, imageFile) => {
 
     // If an image file is provided, upload it and update category image details
     if (imageFile) {
-        const uploadResult = await uploadImageToCloudinary(imageFile);
+        const uploadResult = await uploadImageToCloudinary(imageFile[0]);
         category.image_path = uploadResult.path;
         category.image_name = uploadResult.name;
     }
