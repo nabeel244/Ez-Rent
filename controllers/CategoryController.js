@@ -5,9 +5,8 @@ const HttpStatus = require('../utils/ResponseStatus')
 //Create Category
 const createCategory = async (req, res, next) => {
     try {
-
         // req.file is where the uploaded file data will be
-        const category = await CategoryService.createCategory(req.body, req.file);
+        const category = await CategoryService.createCategory(req.body, req.files['image']);
         res.status(HttpStatus.CREATED).json({ message: "Category added successfully", category });
 
     } catch (error) {

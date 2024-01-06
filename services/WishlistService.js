@@ -1,20 +1,20 @@
 // services/WishlistService.js
-// const { Wishlist } = require('../models/Wishlist'); // Make sure to import the Wishlist model
-const Wishlist = require('../models/Wishlist');
+const  Wishlist  = require('../models/Wishlist'); // Make sure to import the Wishlist model
+
 const WishlistService = {
-    async addToWishlist(userId, productId) {
-        return await Wishlist.create({ userId, productId });
+    async addToWishlist(user_id, product_id) {
+        return await Wishlist.create({ user_id : user_id,product_id: product_id });
     },
 
-    async removeFromWishlist(userId, productId) {
+    async removeFromWishlist(user_id, product_id) {
         return await Wishlist.destroy({
-            where: { userId, productId }
+            where: { user_id, product_id }
         });
     },
 
-    async getUserWishlist(userId) {
+    async getUserWishlist(user_id) {
         return await Wishlist.findAll({
-            where: { userId },
+            where: { user_id },
             include: ['Product'] // Assuming you have set an alias in your relations
         });
     }
