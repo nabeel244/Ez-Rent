@@ -52,6 +52,10 @@ const Product = sequelize.define('products', {
         type: DataTypes.ENUM('Active', 'Inactive', 'Deleted'), // Example values
         allowNull: false
     },
+    comment: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
     featuredImagePath: {
         type: DataTypes.STRING,
         allowNull: true,

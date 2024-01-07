@@ -26,24 +26,22 @@ const productController = {
 
     async updateProduct(req, res, next) {
         try {
-            const productId = req.body.id;
-            const imageFiles = {
-                featuredImage: req.file,
-                images: req.files.images
-            };
+            console.log(req.body)
+            const updatedProduct = await productService.updateProduct(req.body, req.files);
+            res.status(HttpStatus.OK).json({ message: "Product updated successfully", updatedProduct });
 
-            const updatedProduct = await productService.updateProduct(productId, req.body, imageFiles);
-            res.json(updatedProduct);
         } catch (error) {
+            console.log(error.message, 'new message')
             next(error)
         }
     },
 
     async deleteProduct(req, res, next) {
         try {
+            console.log(req.body,'body')
             const productId = req.body.id;
-            const response = await productService.deleteProduct(productId);
-            res.json(response);
+            const product = await productService.deleteProduct(productId);
+            res.status(HttpStatus.OK).json({message: 'Product deleted successfylly', product})
         } catch (error) {
             next(error)
         }
@@ -58,11 +56,10 @@ const productController = {
             res.status(500).json({ message: error.message });
         }
     },
-    async searchProducts(req, res) {
+    async searchProducts(req, res, next) {
         try {
-            const { categoryId, userId } = req.query;
-            const products = await productService.searchProducts({ categoryId, userId });
-            res.json(products);
+            const products = await productService.searchProducts(req);
+            res.status(HttpStatus.OK).json({products})
         } catch (error) {
             next(error);
         }

@@ -4,6 +4,7 @@ const Product = require('../models/Product');
 const slugify = require('slugify');
 const Category = require('../models/Category');
 const User = require('../models/User');
+const { Sequelize } = require('sequelize');
 // Add other models if necessary
 
 const uploadImageToCloudinary = async (file) => {
@@ -32,9 +33,9 @@ const productService = {
     async createProduct(data, filesData) {
 
         const imageFiles = {
-            featuredImage: filesData.image, // if there's a single featured image
-            images: filesData.images // if there are multiple images
-        };
+            featuredImage: filesData.image,
+            images: filesData.images
+        }
         if (data.title) {
             // Creating a slug from the title
             data.slug = slugify(data.title, {
@@ -66,26 +67,48 @@ const productService = {
         return product;
     },
 
-    async updateProduct(productId, updateData, imageFiles) {
-        const product = await Product.findByPk(productId);
+    async updateProduct(data, filesData) {
+        const { status, comment, id } = data
+        console.log(status, comment, id)
+        const product = await Product.findByPk(id, {
+            include: [
+                {
+                    model: Category,
+                    as: 'category',
+                    attributes: ['id', 'name'],
+                },
+                {
+                    model: User,
+                    as: 'user',
+                    attributes: ['id', 'name', 'email', 'role']
+                }
+            ]
+        });
         if (!product) {
             throw new Error('Product not found');
         }
-
+        const imageFiles = {
+            featuredImage: filesData.image,
+            images: filesData.images
+        }
+        if (status) {
+            product.comment = comment
+            product.status = status === 'true' ? 1 : 0
+            return await product.save()
+        }
         // Update featured image if provided
         if (imageFiles.featuredImage) {
-            const featuredImageResult = await uploadImageToCloudinary(imageFiles.featuredImage.path);
-            updateData.featuredImagePath = featuredImageResult.path;
-            updateData.featuredImageName = featuredImageResult.name;
+            const featuredImageResult = await uploadImageToCloudinary(imageFiles.featuredImage[0]);
+            data.featuredImagePath = featuredImageResult.path;
+            data.featuredImageName = featuredImageResult.name;
+        }
+        // Handle multiple images upload
+        if (imageFiles.images && imageFiles.images.length > 0) {
+            const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file)));
+            data.images = imagesResults; // 'images' should be an array of { path, name }
         }
 
-        // Update multiple images if provided
-        if (imageFiles.images && Array.isArray(imageFiles.images) && imageFiles.images.length > 0) {
-            const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file.path)));
-            updateData.images = imagesResults;
-        }
-
-        await product.update(updateData);
+        await product.update(data);
         return product;
     },
 
@@ -94,47 +117,72 @@ const productService = {
         if (!product) {
             throw new Error('Product not found');
         }
-        await product.destroy();
-        return { message: 'Product deleted successfully' };
+      return  await product.destroy();
+       
     },
 
     async getAllProducts() {
         const products = await Product.findAll({
             include: [
                 {
-                    model : Category,
-                    as : 'category',
+                    model: Category,
+                    as: 'category',
                     attributes: ['id', 'name'],
                 },
                 {
-                    model : User,
-                    as : 'user',
-                    attributes: ['id', 'name', 'email','role']
+                    model: User,
+                    as: 'user',
+                    attributes: ['id', 'name', 'email', 'role']
                 }
             ]
         });
         return products;
     },
-    async searchProducts(searchParams) {
-        let whereConditions = {};
-
-        if (searchParams.categoryId) {
-            whereConditions.categoryId = searchParams.categoryId;
+    async searchProducts(req) {
+        const { search, type } = req.body;
+        const validSearchFields = ['name', 'category'];
+    
+        if (!validSearchFields.includes(type)) {
+            throw new Error('Invalid search type');
         }
-
-        if (searchParams.userId) {
-            whereConditions.userId = searchParams.userId;
+    
+        let whereClause = {};
+    
+        // If searching by category name, include the association with Category
+        if (type === 'category') {
+            whereClause = {
+                '$category.name$': {
+                    [Sequelize.Op.like]: `%${search}%`,
+                },
+            };
         }
-
+    
+        // If searching by product name, include the association with User
+        if (type === 'name') {
+            whereClause = {
+                '$user.name$': {
+                    [Sequelize.Op.like]: `%${search}%`,
+                },
+            };
+        }
+    
+        // Perform the search with the appropriate associations
         const products = await Product.findAll({
-            where: whereConditions,
+            where: whereClause,
             include: [
-                // Include other models here if necessary, like Category or User
-            ]
+                {
+                    model: Category,
+                    as: 'category',
+                },
+                {
+                    model: User,
+                    as: 'user',
+                },
+            ],
         });
-
+    
         return products;
-    },
+    }
 
 };
 

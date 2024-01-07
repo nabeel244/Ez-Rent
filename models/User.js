@@ -33,6 +33,10 @@ const User = sequelize.define('users', {
     type: DataTypes.BOOLEAN,
     defaultValue: true
   },
+  comment: {
+    type: DataTypes.TEXT,
+    allowNull: true
+},
   role: {
     type: DataTypes.ENUM,
     defaultValue: 'lessee',

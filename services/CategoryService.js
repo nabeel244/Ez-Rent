@@ -63,17 +63,28 @@ const getCategoryById = async (id) => {
 //Update Category
 
 const updateCategory = async (body, imageFile) => {
-    const { name, id, comment } = body;
-    const category = await Category.findByPk(id);
+    const { name, id, comment, status } = body;
+    const category = await Category.findByPk(id, {
+        include: [
+            {
+                model: Product,
+                as: 'products',
+            },
+        ],
+    });
+   
     if (!category) {
         throw new Error('Category not found');
     }
-    if (comment) {
+  
+ 
+    if (status) {
         category.comment = comment
+        category.status = status === 'true' ? 1 : 0
         return await category.save()
+    } else {
+        category.name = name ? name : category.name;
     }
-    // Update category details
-    category.name = name;
 
     // If an image file is provided, upload it and update category image details
     if (imageFile) {
@@ -81,7 +92,6 @@ const updateCategory = async (body, imageFile) => {
         category.image_path = uploadResult.path;
         category.image_name = uploadResult.name;
     }
-    console.log(category)
     return await category.save();
 
 };
