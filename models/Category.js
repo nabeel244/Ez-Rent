@@ -4,7 +4,6 @@ const sequelize = require('../database');
 const Category = sequelize.define('categories', {
     name: {
         type: DataTypes.STRING,
-        // allowNull: false,
         validate: {
             notEmpty: {
                 msg: "Category name is required"
@@ -13,13 +12,13 @@ const Category = sequelize.define('categories', {
 
     },
     image_path: {
-        type: DataTypes.STRING,
-        // allowNull: false,    
+        type: DataTypes.STRING,  
         validate: {
             notEmpty: {
                 msg: "Image is required"
             }
         }
+
        
     },
     image_name: {
