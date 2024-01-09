@@ -53,6 +53,9 @@ const searchUser = async (req) => {
         [type]: {
             [Sequelize.Op.like]: `%${search}%`,
         },
+        role: {
+            [Sequelize.Op.not]: 'admin',
+        },
     };
 
     const users = await User.findAll({

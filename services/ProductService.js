@@ -7,25 +7,48 @@ const User = require('../models/User');
 const { Sequelize } = require('sequelize');
 // Add other models if necessary
 
+// const uploadImageToCloudinary = async (file) => {
+//     try {
+//         return new Promise((resolve, reject) => {
+//             const uploadStream = cloudinary.uploader.upload_stream({
+//                 resource_type: 'auto',
+//                 public_id: file.originalname.split('.')[0] // This sets the public_id to the original filename without extension
+//             }, (error, result) => {
+//                 if (error) {
+//                     reject(error);
+//                 } else {
+//                     resolve({ path: result.url, name: file.originalname }); // Use file.originalname to get the original file name
+//                 }
+//             });
+
+//             uploadStream.end(file.buffer);
+//         });
+//     } catch (error) {
+//         console.error('Error uploading to Cloudinary', error);
+//         throw error;
+//     }
+// };
 const uploadImageToCloudinary = async (file) => {
     try {
         return new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream({
                 resource_type: 'auto',
-                public_id: file.originalname.split('.')[0] // This sets the public_id to the original filename without extension
+                public_id: file.originalname.split('.')[0],
+                timeout: 60000,
             }, (error, result) => {
                 if (error) {
+                    console.error('Error uploading to Cloudinary:', error);
                     reject(error);
                 } else {
-                    resolve({ path: result.url, name: file.originalname }); // Use file.originalname to get the original file name
+                    resolve({ path: result.url, name: file.originalname });
                 }
             });
 
             uploadStream.end(file.buffer);
         });
     } catch (error) {
-        console.error('Error uploading to Cloudinary', error);
-        throw error;
+        console.error('Error in uploadImageToCloudinary function:', error);
+        throw error; // Consider removing this line
     }
 };
 
@@ -69,7 +92,7 @@ const productService = {
 
     async updateProduct(data, filesData) {
         const { status, comment, id } = data
-        console.log(status, comment, id)
+        console.log(data,'data')
         const product = await Product.findByPk(id, {
             include: [
                 {
