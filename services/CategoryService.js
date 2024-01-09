@@ -6,28 +6,6 @@ const cloudinary = require('../utils/cloudinary');
 const { Op } = require('sequelize'); // Import Op from Sequelize
 
 
-
-// const uploadImageToCloudinary = async (file) => {
-//     try {
-//         return new Promise((resolve, reject) => {
-//             const uploadStream = cloudinary.uploader.upload_stream({
-//                 resource_type: 'auto',
-//                 public_id: file.originalname.split('.')[0] // This sets the public_id to the original filename without extension
-//             }, (error, result) => {
-//                 if (error) {
-//                     reject(error);
-//                 } else {
-//                     resolve({ path: result.url, name: file.originalname }); // Use file.originalname to get the original file name
-//                 }
-//             });
-
-//             uploadStream.end(file.buffer);
-//         });
-//     } catch (error) {
-//         console.error('Error uploading to Cloudinary', error);
-//         throw error;
-//     }
-// };
 const uploadImageToCloudinary = async (file) => {
     try {
         return new Promise((resolve, reject) => {
@@ -108,7 +86,7 @@ const updateCategory = async (body, imageFile) => {
     } else {
         category.name = name ? name : category.name;
     }
-
+console.log(body, 'this is body')
     console.log(imageFile, 'wer are here')
     // If an image file is provided, upload it and update category image details
     if (imageFile) {

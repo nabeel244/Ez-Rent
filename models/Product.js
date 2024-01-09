@@ -48,10 +48,7 @@ const Product = sequelize.define('products', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    status: {
-        type: DataTypes.ENUM('Active', 'Inactive', 'Deleted'), // Example values
-        allowNull: false
-    },
+
     comment: {
         type: DataTypes.TEXT,
         allowNull: true
