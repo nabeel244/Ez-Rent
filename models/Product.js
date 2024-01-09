@@ -86,6 +86,11 @@ const Product = sequelize.define('products', {
         type: DataTypes.BOOLEAN,
         defaultValue: true
     },
+    faqs : {
+        type: DataTypes.TEXT,
+        defaultValue: null
+    }
+
 }, {
     timestamps: true, // if you want to have Sequelize automatically add createdAt and updatedAt
     createdAt: 'created_at',

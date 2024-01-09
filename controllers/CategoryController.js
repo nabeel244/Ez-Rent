@@ -42,7 +42,7 @@ const getCategory = async (req, res, next) => {
 //Update Category
 const updateCategory = async (req, res, next) => {
     try {
-        const updatedCategory = await CategoryService.updateCategory(req.body, req.file);
+        const updatedCategory = await CategoryService.updateCategory(req.body, req.files['image']);
         res.status(HttpStatus.OK).json({ message: "Category updated successfully", updatedCategory });
     } catch (error) {
         next(error)
