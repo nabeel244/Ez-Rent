@@ -5,29 +5,7 @@ const slugify = require('slugify');
 const Category = require('../models/Category');
 const User = require('../models/User');
 const { Sequelize } = require('sequelize');
-// Add other models if necessary
 
-// const uploadImageToCloudinary = async (file) => {
-//     try {
-//         return new Promise((resolve, reject) => {
-//             const uploadStream = cloudinary.uploader.upload_stream({
-//                 resource_type: 'auto',
-//                 public_id: file.originalname.split('.')[0] // This sets the public_id to the original filename without extension
-//             }, (error, result) => {
-//                 if (error) {
-//                     reject(error);
-//                 } else {
-//                     resolve({ path: result.url, name: file.originalname }); // Use file.originalname to get the original file name
-//                 }
-//             });
-
-//             uploadStream.end(file.buffer);
-//         });
-//     } catch (error) {
-//         console.error('Error uploading to Cloudinary', error);
-//         throw error;
-//     }
-// };
 const uploadImageToCloudinary = async (file) => {
     try {
         return new Promise((resolve, reject) => {
@@ -91,8 +69,8 @@ const productService = {
     },
 
     async updateProduct(data, filesData) {
-        const { status, comment, id } = data
-        console.log(data,'data')
+        const { status, comment, id, old_images } = data
+
         const product = await Product.findByPk(id, {
             include: [
                 {
@@ -129,8 +107,28 @@ const productService = {
         if (imageFiles.images && imageFiles.images.length > 0) {
             const imagesResults = await Promise.all(imageFiles.images.map(file => uploadImageToCloudinary(file)));
             data.images = imagesResults; // 'images' should be an array of { path, name }
-        }
 
+            // Compare old_images with existing product images
+            const existingImages = product.images || [];
+
+            if (old_images.length !== existingImages.length) {
+                // Determine missing images based on path
+                const missingImages = existingImages.filter(existingImage =>
+                    !old_images.some(oldImage => oldImage.path === existingImage.path)
+                );
+
+                // Replace the missing images with the new ones
+                missingImages.forEach((missingImage, index) => {
+                    const newImage = imagesResults[index];
+                    const imageToUpdate = existingImages.find(existingImage => existingImage.path === missingImage.path);
+
+                    if (imageToUpdate) {
+                        imageToUpdate.path = newImage.path;
+                        imageToUpdate.name = newImage.name;
+                    }
+                });
+            }
+        }
         await product.update(data);
         return product;
     },
@@ -140,8 +138,8 @@ const productService = {
         if (!product) {
             throw new Error('Product not found');
         }
-      return  await product.destroy();
-       
+        return await product.destroy();
+
     },
 
     async getAllProducts() {
@@ -164,13 +162,13 @@ const productService = {
     async searchProducts(req) {
         const { search, type } = req.body;
         const validSearchFields = ['name', 'category'];
-    
+
         if (!validSearchFields.includes(type)) {
             throw new Error('Invalid search type');
         }
-    
+
         let whereClause = {};
-    
+
         // If searching by category name, include the association with Category
         if (type === 'category') {
             whereClause = {
@@ -179,7 +177,7 @@ const productService = {
                 },
             };
         }
-    
+
         // If searching by product name, include the association with User
         if (type === 'name') {
             whereClause = {
@@ -188,7 +186,7 @@ const productService = {
                 },
             };
         }
-    
+
         // Perform the search with the appropriate associations
         const products = await Product.findAll({
             where: whereClause,
@@ -203,7 +201,7 @@ const productService = {
                 },
             ],
         });
-    
+
         return products;
     }
 
