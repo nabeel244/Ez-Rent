@@ -1,6 +1,6 @@
 // Assuming sequelize instance is correctly set up and imported in your application
 module.exports = (sequelize, DataTypes) => {
-    const Page = sequelize.define('Page', {
+    const Page = sequelize.define('Pages', {
         pageName: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         content: {
             type: DataTypes.TEXT,
             allowNull: false
-        }
+        },
     });
 
     return Page;

@@ -6,6 +6,7 @@ const authRoutes = require('./routes/AuthRoutes')
 const categoryRoutes = require('./routes/CategoryRoutes')
 const productRoutes = require('./routes/ProductRoutes')
 const wishlistRoutes = require('./routes/WishlistRoutes')
+const pageRoutes = require('./routes/PageRoutes')
 const errorHandler = require('./middlewares/ErrorHandlerMiddleware')
 const passport = require('./utils/PassportStrategy')
 const session = require('express-session');
@@ -30,7 +31,7 @@ app.use(session({
 setupDatabaseRelations();
 app.use(passport.initialize());
 app.use(passport.session());
-// sequelize.sync({ alter: true }).then(() => { // when you update your db , add or update you migration then you uncomment these
+//  sequelize.sync({ alter: true }).then(() => { // when you update your db , add or update you migration then you uncomment these
 //     console.log('Database & tables created!');
 // }).catch(error => {
 //     console.log('Table sync failed', error.message)
@@ -40,7 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/wishlists', wishlistRoutes);
-
+app.use('/api/pages', pageRoutes)
 app.use(errorHandler)
 
 app.listen(process.env.PORT || 3001, () => {
