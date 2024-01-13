@@ -5,7 +5,8 @@ const HttpStatus = require('../utils/ResponseStatus');
 const PageController = {
     async createOrUpdatePage(req, res, next) {
         try {
-            const updatedPage = await PageService.updatePage(req);
+            const page = await PageService.createUpdatePage(req);
+            res.status(HttpStatus.OK).json({ message: "Page Updated Successfully" , page});
 
         } catch (error) {
             next(error);

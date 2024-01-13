@@ -12,7 +12,6 @@ const passport = require('./utils/PassportStrategy')
 const session = require('express-session');
 const cors = require('cors')
 const setupDatabaseRelations = require('./models/Relations');
-
 const app = express();
 const sequelize = require('./database');
 app.use(cors())

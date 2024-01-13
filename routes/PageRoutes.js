@@ -7,7 +7,7 @@ const checkRole = require('../middlewares/RoleMiddleware');
 const router = express.Router();
 
 // Use PUT for both create and update
-router.put('/:pageName?' , PageController.createOrUpdatePage);
+router.post('/create-update' , PageController.createOrUpdatePage);
 
 router.get('/:pageName', PageController.viewPage);
 
