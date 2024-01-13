@@ -2,6 +2,7 @@ const Product = require('./Product');
 const Category = require('./Category');
 const User = require('./User');
 const Wishlist = require('./Wishlist')
+const Page = require('./Page')
 
 const setupDatabaseRelations = () => {
     /////////////// Reltion with category and product /////////////////////////////////////
