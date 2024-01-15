@@ -203,8 +203,61 @@ const productService = {
         });
 
         return products;
-    }
+    },
+     // Get Product for a specific user 
+     async getProductsForUser(userId) {
+        try {
+            // Retrieve products associated with the specified user ID
+            const products = await Product.findAll({
+                where: {
+                    user_id: userId,
+                },
+                include: [
+                    {
+                        model: Category,
+                        as: 'category',
+                        attributes: ['id', 'name'],
+                    },
+                    {
+                        model: User,
+                        as: 'user',
+                        attributes: ['id', 'name', 'email', 'role'],
+                    },
+                ],
+            });
 
+            return products;
+        } catch (error) {
+            console.error('Error in getProductsForUser function:', error);
+            throw error; 
+        }
+    },
+
+    //REMARKS about a specific product
+    async updateRemarks(productId, userId, remarks) {
+        try {
+            const product = await Product.findOne({
+                where: {
+                    id: productId,
+                    user_id: userId,
+                },
+            });
+
+            if (!product) {
+                return null; // Return null when the product is not found or user does not have permission
+            }
+
+            // Update the remarks field
+            product.remarks = remarks;
+            await product.save();
+
+            return product;
+        } catch (error) {
+            console.error('Error in updateRemarks function:', error);
+            throw error; // Consider removing this line or handling the error appropriately
+        }
+    },
 };
+
 
 module.exports = productService;
