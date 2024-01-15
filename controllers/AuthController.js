@@ -2,8 +2,6 @@
 const authService = require('../services/AuthService');
 const HttpStatus = require('../utils/ResponseStatus')
 
-
-
 const register = async(req, res, next) => {
     try {
         const user = await authService.register(req.body)

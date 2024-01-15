@@ -203,7 +203,36 @@ const productService = {
         });
 
         return products;
-    }
+    },
+     // Get Product for a specific user 
+     async getProductsForUser(userId) {
+        try {
+            // Retrieve products associated with the specified user ID
+            const products = await Product.findAll({
+                where: {
+                    user_id: userId,
+                },
+                include: [
+                    {
+                        model: Category,
+                        as: 'category',
+                        attributes: ['id', 'name'],
+                    },
+                    {
+                        model: User,
+                        as: 'user',
+                        attributes: ['id', 'name', 'email', 'role'],
+                    },
+                ],
+            });
+
+            return products;
+        } catch (error) {
+            console.error('Error in getProductsForUser function:', error);
+            throw error; 
+        }
+    },
+
 
 };
 

@@ -22,4 +22,6 @@ router.get('/all', productController.getAllProducts);
 
 router.post('/search', authenticateToken, productController.searchProducts);
 
+router.post('/user/products', productController.getProductsForUser);
+
 module.exports = router;
