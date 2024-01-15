@@ -75,7 +75,30 @@ const productController = {
         }catch (error) {
             next(error);
         }
-    }
+    },
+    //Remarks about a specific Product 
+    async updateRemarks(req, res, next) {
+        try {
+            const productId = req.body.productId;
+            const userId = req.body.userId;
+            const remarks = req.body.remarks;
+
+            if (!productId || !userId || !remarks) {
+                return res.status(HttpStatus.BAD_REQUEST).json({ message: "ProductId, userId, and remarks are required in the request body" });
+            }
+
+            // Call the productService method to update remarks
+            const updatedProduct = await productService.updateRemarks(productId, userId, remarks);
+
+            if (!updatedProduct) {
+                return res.status(HttpStatus.NOT_FOUND).json({ message: "Product not found or user does not have permission to update remarks" });
+            }
+
+            res.status(HttpStatus.OK).json({ message: "Remarks updated successfully", updatedProduct });
+        } catch (error) {
+            next(error);
+        }
+    },
 };
 
 module.exports = productController;

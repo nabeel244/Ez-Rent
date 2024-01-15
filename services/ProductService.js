@@ -233,7 +233,31 @@ const productService = {
         }
     },
 
+    //REMARKS about a specific product
+    async updateRemarks(productId, userId, remarks) {
+        try {
+            const product = await Product.findOne({
+                where: {
+                    id: productId,
+                    user_id: userId,
+                },
+            });
 
+            if (!product) {
+                return null; // Return null when the product is not found or user does not have permission
+            }
+
+            // Update the remarks field
+            product.remarks = remarks;
+            await product.save();
+
+            return product;
+        } catch (error) {
+            console.error('Error in updateRemarks function:', error);
+            throw error; // Consider removing this line or handling the error appropriately
+        }
+    },
 };
+
 
 module.exports = productService;

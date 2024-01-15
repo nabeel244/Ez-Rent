@@ -24,4 +24,7 @@ router.post('/search', authenticateToken, productController.searchProducts);
 
 router.post('/user/products', productController.getProductsForUser);
 
+router.patch('/update-remarks', productController.updateRemarks);
+
+
 module.exports = router;
