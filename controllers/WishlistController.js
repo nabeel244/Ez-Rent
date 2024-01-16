@@ -5,9 +5,9 @@ const HttpStatus = require('../utils/ResponseStatus')
 const WishlistController = {
     async addToWishlist(req, res, next) {
         try {
-            const { user_id, prodcut_id } = req.body; // Assuming these are passed in the request body
-            const wishlist = await WishlistService.addToWishlist(user_id, prodcut_id);
-            res.status(HttpStatus.OK).json({ message: "Added in Wishlist", wishlist });
+           
+            let wishlist = await WishlistService.addToWishlist(req);
+            res.status(HttpStatus.OK).json({ message: wishlist.message, wishlist : wishlist.wishlist });
         } catch (error) {
             // res.status(500).send(error.message);
             next(error)
