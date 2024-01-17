@@ -6,11 +6,9 @@ const checkRole = require('../middlewares/RoleMiddleware');
 
 const router = express.Router();
 
-// Assuming PageController has methods similar to CategoryController
-router.post('/create', authenticateToken, checkRole(['admin']), PageController.createPage);
-router.get('/all', authenticateToken, checkRole(['admin']), PageController.allPages);
-router.get('/:pageName', PageController.getPage); // Public access, no authentication required
-router.put('/update/:pageName', authenticateToken, checkRole(['admin']), PageController.updatePage);
-router.delete('/:pageName', authenticateToken, checkRole(['admin']), PageController.deletePage);
+// Use PUT for both create and update
+router.post('/create-update' , PageController.createOrUpdatePage);
+
+router.get('/:pageName', PageController.viewPage);
 
 module.exports = router;

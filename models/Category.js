@@ -1,16 +1,43 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../database'); // Adjust this path to where your sequelize instance is configured
+const sequelize = require('../database');
 
-const Page = sequelize.define('Page', {
-    pageName: {
+const Category = sequelize.define('categories', {
+    name: {
         type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
-    },
-    content: {
-        type: DataTypes.TEXT,
-        allowNull: false
-    }
-}, {});
+        validate: {
+            notEmpty: {
+                msg: "Category name is required"
+            }
+        }
 
-module.exports = Page;
+    },
+    image_path: {
+        type: DataTypes.STRING,  
+        validate: {
+            notEmpty: {
+                msg: "Image is required"
+            }
+        }
+
+       
+    },
+    image_name: {
+        type: DataTypes.STRING,
+        allowNull: true, // Allow null if the image name is not mandatory
+        defaultValue: null
+    },
+    comment: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    status: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+}, {
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+});
+
+module.exports = Category;

@@ -5,7 +5,7 @@ const Product = sequelize.define('products', {
     slug: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        // unique: true
     },
     title: {
         type: DataTypes.STRING,
@@ -48,9 +48,10 @@ const Product = sequelize.define('products', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    status: {
-        type: DataTypes.ENUM('Active', 'Inactive', 'Deleted'), // Example values
-        allowNull: false
+
+    comment: {
+        type: DataTypes.TEXT,
+        allowNull: true
     },
     featuredImagePath: {
         type: DataTypes.STRING,
@@ -82,6 +83,11 @@ const Product = sequelize.define('products', {
         type: DataTypes.BOOLEAN,
         defaultValue: true
     },
+    faqs : {
+        type: DataTypes.TEXT,
+        defaultValue: null
+    }
+
 }, {
     timestamps: true, // if you want to have Sequelize automatically add createdAt and updatedAt
     createdAt: 'created_at',

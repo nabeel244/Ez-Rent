@@ -23,19 +23,6 @@ function errorHandler(err, req, res, next) {
             return e.message;
         });
     } else if (err.name === 'SequelizeUniqueConstraintError') {
-        // Handle Sequelize unique constraint errors (outside of validation errors)
-        // err.errors.forEach(error => {
-           
-        //     if (error.path === 'email') {
-        //         errors.push('email already taken');
-               
-        //     } else if (error.path === 'name') {
-        //         error.push('username is not available')
-        //     } 
-        //     else {
-        //         errors.push(error.message);
-        //     }
-        // });
         status = HttpStatus.CONFLICT; // 409 Conflict
     } else if (err.message) {
         // Handle custom errors

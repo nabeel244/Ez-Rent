@@ -14,12 +14,17 @@ router.post('/create', fileHandlingMiddleware, productController.createProduct);
 
 router.get('/products/get', authenticateToken, checkRole(['lessor', 'lessee']), productController.getProduct);
 
-router.put('/products/update', authenticateToken, checkRole(['lessor']), productController.updateProduct);
+router.put('/update', authenticateToken,fileHandlingMiddleware, checkRole(['admin']), productController.updateProduct);
 
-router.delete('/products/delete', authenticateToken, checkRole(['lessor']), productController.deleteProduct);
+router.post('/delete', authenticateToken, checkRole(['lessor', 'admin']), productController.deleteProduct);
 
 router.get('/all', productController.getAllProducts);
 
-router.get('/products/search', authenticateToken, checkRole(['lessor', 'lessee', 'admin']), productController.searchProducts);
+router.post('/search', authenticateToken, productController.searchProducts);
+
+router.post('/user/products', productController.getProductsForUser);
+
+router.patch('/update-remarks', productController.updateRemarks);
+
 
 module.exports = router;
